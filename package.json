@@ -11,7 +11,7 @@
     "build-dev": "cross-env NODE_ENV=development webpack --progress --hide-modules",
     "deploy": "npm run build && copy dist/build.js public/build.js /Y && copy index.html public /Y",
     "deploy-dev": "npm run build-dev && copy dist/build.js public/build.js /Y && copy index.html public /Y",
-    "start": "npm run deploy"
+    "start": "node server.js"
   },
   "dependencies": {
     "bootstrap-vue": "^2.0.0-rc.11",
