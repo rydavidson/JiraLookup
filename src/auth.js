@@ -11,7 +11,7 @@ function authenticateUser (username, passhash, callback) {
   var hash1 = crypto.createHash('sha256');
 
   //console.log("Trying to calculate env pass hash");
-  hash1.update(process.env.PASSWORD.trim());
+  hash1.update(process.env.PASSWORD);
   var pass = hash1.digest('hex');
   //console.log("Env pass hash: " + pass);
 
