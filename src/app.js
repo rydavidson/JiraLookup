@@ -83,11 +83,6 @@ const nav = new Vue({
   router
 }).$mount('#nav')
 
-const result = new Vue({
-  render: h => h(ResultView),
-  router
-})
-
 const login = new Vue({
   render: h => h(Login),
   router
