@@ -6,16 +6,20 @@
       <b-button size="lg" style="background-color: #002c76" type="submit">Search</b-button>
     </div>
     <div id="results">
+    <result-view v-for="result in results">
 
+    </result-view>
     </div>
   </div>
 </template>
 
 <script>
+    import ResultView from "./ResultView";
     export default {
         name: "SearchView",
-        data(){
-
+      components: {ResultView},
+      data(){
+          results: []
         },
       methods: {
         onSubmit (evt) {
