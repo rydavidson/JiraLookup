@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import App from './App.vue'
 import Navbar from './components/Navbar.vue'
+import SearchView from './components/SearchView.vue'
 import ResultView from './components/ResultView.vue'
 import Login from './components/Login.vue'
 import VueRouter from 'vue-router'
 import BootstrapVue from 'bootstrap-vue'
-import Auth from './auth.js';
 
 // css
 import 'bootstrap/dist/css/bootstrap.css'
@@ -29,6 +29,14 @@ const routes = [
   {
     path: '/',
     name: 'view',
+    component: SearchView,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/result',
+    name: 'result',
     component: ResultView,
     meta: {
       requiresAuth: true
@@ -49,7 +57,6 @@ router.beforeEach((to, from, next) => {
         params: { nextUrl: to.fullPath }
       })
     } else {
-      //let user = JSON.parse(localStorage.getItem('user'));
       next()
     }
   } else if(to.matched.some(record => record.meta.guest)) {
@@ -57,7 +64,7 @@ router.beforeEach((to, from, next) => {
       next()
     }
     else{
-      next({ name: 'view'})
+      next({ name: from})
     }
   }else {
     next()
@@ -75,6 +82,11 @@ const nav = new Vue({
   render: h => h(Navbar),
   router
 }).$mount('#nav')
+
+const result = new Vue({
+  render: h => h(ResultView),
+  router
+})
 
 const login = new Vue({
   render: h => h(Login),

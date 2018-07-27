@@ -1,15 +1,18 @@
 #search {
-  width: 50%;
-  min-width: 100px;
+  width: 20%;
+  min-width: 250px;
   margin: auto;
 }
 #loginGroup{
-  width: 50%;
-  min-width: 100px;
+  width: 20%;
+  min-width: 250px;
   margin: auto;
 }
 #small-alert{
-width: 50%;
-  mind-width: 50px;
+width: 20%;
+  min-width: 100px;
   margin: auto;
+}
+.bg-info {
+  background-color: #002c76 !important;
 }

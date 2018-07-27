@@ -1,36 +1,67 @@
-import * as jwt from 'jsonwebtoken'
-import * as crypto from 'crypto'
 
 function authenticateUser (username, passhash, callback) {
 
-  if(process.env.USERNAME === null || process.env.PASSWORD === null){
-    //console.log("Empty username or password, returning");
-    callback(jwt.sign({user: 'accela'}, process.env.SECRET || "secret"));
-  }
+  var api = process.env.API_URL || "https://jiralookup-backend.herokuapp.com:3001";
 
-  var hash1 = crypto.createHash('sha256');
+    if(username.length > 0){
+      if(passhash.length > 0){
 
-  //console.log("Trying to calculate env pass hash");
-  hash1.update(process.env.PASSWORD);
-  var pass = hash1.digest('hex');
-  //console.log("Env pass hash: " + pass);
+        var xhr = createCORSRequest("POST",  api + "/auth");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() {
 
+          if (this.readyState === XMLHttpRequest.DONE) {
+            if (this.status === 200) {
+              var res = JSON.parse(this.responseText);
+              callback(res);
+            }
+            else {
+              if (this.status === 403) {
+                callback(new Error(JSON.parse(this.responseText)));
+              }
+              else {
+                callback(new Error("Something went wrong"));
+                console.error(JSON.parse(this.responseText));
+              }
+            }
+          }
+        }
 
-    if(username === process.env.USERNAME){
-      if(passhash === pass){
-        callback(jwt.sign({user: 'accela'}, process.env.SECRET || "secret"))
+        xhr.send("username=" + username + "&password=" + passhash);
+
       }
       else{
-        callback(new Error("Incorrect username or password"));
-        //console.log("Invalid password");
-        //console.log("Expected: " + process.env.PASSWORD);
+        callback(new Error("Password cannot be empty"));
       }
     }
     else{
-      callback(new Error("Incorrect username or password"));
-      //console.log("Invalid username");
+      callback(new Error("Username cannot be empty"));
     }
   }
 
-  export {authenticateUser};
+function createCORSRequest(method, url) {
+  var xhr = new XMLHttpRequest();
+  if ("withCredentials" in xhr) {
+
+    // Check if the XMLHttpRequest object has a "withCredentials" property.
+    // "withCredentials" only exists on XMLHTTPRequest2 objects.
+    xhr.open(method, url, true);
+
+  } else if (typeof XDomainRequest !== "undefined") {
+
+    // Otherwise, check if XDomainRequest.
+    // XDomainRequest only exists in IE, and is IE's way of making CORS requests.
+    xhr = new XDomainRequest();
+    xhr.open(method, url);
+
+  } else {
+
+    // Otherwise, CORS is not supported by the browser.
+    xhr = null;
+
+  }
+  return xhr;
+}
+
+export {authenticateUser};
 

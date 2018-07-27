@@ -25,8 +25,10 @@
                  @dismissed="showDismissibleAlert=false">
           {{ form.err }}
         </b-alert>
-        <b-button type="submit" variant="primary">Submit</b-button>
-        <b-button type="reset" variant="danger">Clear</b-button>
+        <br/>
+        <b-button type="submit"  style="background-color: #002c76">Submit</b-button>
+      <br/>
+        <b-button type="reset" style="background-color: #EE7622">Clear</b-button>
       </b-form>
     </div>
 </template>
