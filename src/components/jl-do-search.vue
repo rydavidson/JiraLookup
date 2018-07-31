@@ -33,7 +33,8 @@
       return {
         sfid: "",
         showDismissibleAlert: false,
-        err: ""
+        err: "",
+        devLogin: false
       }
     },
     methods: {
@@ -50,7 +51,7 @@
         // }
         var api = "https://jiralookup-backend-dev.herokuapp.com/search/";
 
-        if(form.username.indexOf("dev") > 0){
+        if(this.devLogin){
           api = "http://localhost:3001/search/"
         }
 
@@ -81,6 +82,11 @@
         }
         xhr.send();
       }
+    },
+    created() {
+      eventBus.$on('devLogin', (devLogin) => {
+        this.devLogin = true;
+      });
     }
   }
 
