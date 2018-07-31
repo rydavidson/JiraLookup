@@ -1,18 +1,15 @@
 import Vue from 'vue'
 import App from './App.vue'
-import Navbar from './components/Navbar.vue'
-import SearchView from './components/SearchView.vue'
-import ResultView from './components/ResultView.vue'
-import Login from './components/Login.vue'
+import navbar from './components/jl-navbar.vue'
+import dosearch from './components/jl-do-search.vue'
+import resultitems from './components/jl-result-items.vue'
+import dologin from './components/jl-do-login.vue'
 import VueRouter from 'vue-router'
 import BootstrapVue from 'bootstrap-vue'
 
 // css
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-import './app.css'
-
-const crypto = require('crypto');
 
 Vue.use(VueRouter);
 Vue.use(BootstrapVue);
@@ -21,15 +18,15 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: Login,
+    component: dologin,
     meta: {
       guest: true
     }
   },
   {
-    path: '/',
-    name: 'view',
-    component: SearchView,
+    path: '/search',
+    name: 'search',
+    component: dosearch,
     meta: {
       requiresAuth: true
     }
@@ -37,7 +34,7 @@ const routes = [
   {
     path: '/result',
     name: 'result',
-    component: ResultView,
+    component: resultitems,
     meta: {
       requiresAuth: true
     }
@@ -79,12 +76,12 @@ const app = new Vue({
 }).$mount('#app')
 
 const nav = new Vue({
-  render: h => h(Navbar),
+  render: h => h(navbar),
   router
 }).$mount('#nav')
 
 const login = new Vue({
-  render: h => h(Login),
+  render: h => h(dologin),
   router
 })
 
