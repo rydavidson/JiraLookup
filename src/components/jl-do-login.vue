@@ -41,7 +41,7 @@
   import {eventBus} from '../app.js'
 
   export default {
-    name: "Login",
+    name: "dologin",
     data() {
       return {
         form: {
@@ -68,7 +68,7 @@
           }
           else {
             sessionStorage.setItem('jwt', jwt);
-            self.$parent.$router.replace('/');
+            self.$parent.$router.replace('/search');
             eventBus.$emit('loggedIn', true);
             //alert(JSON.stringify(jwt));
           }

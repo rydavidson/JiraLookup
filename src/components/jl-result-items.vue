@@ -1,15 +1,4 @@
 <template>
-  <!---
-  <b-card title=Results
-          class="mb-2">
-    <p class="card-text" v-if="showResult">
-      <strong>Title:</strong> {{results.title}}
-      <strong>Status:</strong> {{results.status.publicStatus}}
-      <strong>Jira ID:</strong> {{results.key}}
-      <a :href="results.sfuri">Go to Salesforce Case</a>
-    </p>
-  </b-card>
-  --->
   <div>
     <div class="card" v-if="showResult">
       <div class="card-header">{{results.key}}</div>
@@ -17,11 +6,14 @@
         <i class="material-icons">check_box</i>
         <div class="main-description">
           <p><strong>Status: </strong>{{results.status.publicStatus}}</p>
-          <p id="result-description"><strong>Description: </strong><br/>{{results.title}}</p>
+          <p><strong>Targeted Release: </strong>{{results.fixtarget}}</p>
+          <p><strong>Description: </strong></p>
+          <p id="result-description">{{results.title}}</p>
+          <!--
           <b-tooltip target="result-description" placement="top" boundary="window">
             {{results.title}}
           </b-tooltip>
-          <p><strong>Targeted Release: </strong>{{results.fixtarget}}</p>
+          -->
         </div>
       </div>
     </div>
@@ -39,7 +31,7 @@
   import {eventBus} from '../app.js'
 
   export default {
-    name: "ResultView",
+    name: "resultitems",
     data() {
       return {
         title: "",
@@ -78,9 +70,15 @@
         this.results.status = result.status;
         this.showResult = true;
       });
-      eventBus.$on('emptyResult', (isEmpty) => {
+      eventBus.$on('emptyResult', (e) => {
         this.showResult = false;
         this.err = "No results returned";
+        this.showDismissibleAlert = true;
+      });
+      eventBus.$on('invalidInput', (e) => {
+        console.log("Invalid input fired");
+        this.showResult = false;
+        this.err = "Invalid input";
         this.showDismissibleAlert = true;
       });
     }
@@ -91,24 +89,24 @@
 <style scoped>
 
   .card {
-    width: 200px;                 /* Set width of cards */
-    border: 1px solid #EF9A9A;    /* Set up Border */
+    width: 20%;                 /* Set width of cards */
+    border: 1px solid #3aadef;    /* Set up Border */
     border-radius: 4px;           /* Slightly Curve edges */
     overflow: hidden;             /* Fixes the corners */
     display: flex;                /* Children use Flexbox */
     flex-direction: column;       /* Rotate Axis */
     margin: auto;
-    height: 200px;
+    height: 20%;
     text-overflow: ellipsis;
   }
 
   .card-header {
-    color: #D32F2F;
+    color: #1514d3;
     text-align: center;
     font-size: 12px;
     font-weight: 600;
-    border-bottom: 1px solid #EF9A9A;
-    background-color: #FFEBEE;
+    border-bottom: 1px solid #3aadef;
+    background-color: #ddf3ff;
     padding: 5px 10px;
   }
 
@@ -117,28 +115,39 @@
     flex-direction: column;     /* Rotate Axis to Vertical */
     justify-content: center;    /* Group Children in Center */
     align-items: center;        /* Group Children in Center (+axis) */
-    padding: 15px 0;            /* Add padding to the top/bottom */
+    padding: 15px 0 0 0;            /* Add padding to the top/bottom */
   }
 
   .material-icons {
     font-size: 36px;
-    color: #D32F2F;
+    color: #1514d3;
     margin-bottom: 5px;
   }
 
   .main-description {
-    color: #D32F2F;
+    color: #1514d3;
     font-size: 12px;
     text-align: center;
-    text-overflow: ellipsis;
+    height: auto;
     min-width: 0;
     min-height: 0;
+  }
+
+  #result-description {
+    overflow-y: scroll;
+    height: 150px;
+    width: auto;
+    text-overflow: ellipsis;
   }
 
   #small-alert{
     width: 20%;
     min-width: 100px;
     margin: auto;
+  }
+
+  p {
+    margin-bottom: 0rem;
   }
 
 </style>

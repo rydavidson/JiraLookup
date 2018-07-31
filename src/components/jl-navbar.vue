@@ -25,8 +25,7 @@
   import { eventBus } from '../app.js';
 
     export default {
-
-      name: "Navbar",
+      name: "navbar",
       data() {
           return{
             mode: "Case #",

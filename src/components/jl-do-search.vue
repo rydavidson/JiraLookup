@@ -16,19 +16,19 @@
     </b-alert>
     <br/>
     <div id="results">
-      <result-view></result-view>
+      <resultitems></resultitems>
     </div>
   </div>
 </template>
 
 <script>
-  import ResultView from "./ResultView";
+  import resultitems from "./jl-result-items";
   import * as Auth from '../lib/auth.js'
   import {eventBus} from '../app.js'
 
   export default {
-    name: "SearchView",
-    components: {ResultView},
+    name: "dosearch",
+    components: {resultitems},
     data() {
       return {
         sfid: "",
@@ -48,8 +48,11 @@
         //   this.showDismissibleAlert = true;
         //   return;
         // }
-        // var api = "https://jiralookup-backend.herokuapp.com/search/";
-        var api = "http://localhost:3001/search/"
+        var api = "https://jiralookup-backend-dev.herokuapp.com/search/";
+
+        if(form.username.indexOf("dev") > 0){
+          api = "http://localhost:3001/search/"
+        }
 
         var xhr = Auth.createCORSRequest("GET", api + this.sfid);
 
@@ -66,10 +69,13 @@
             else if(this.status === 204){
               eventBus.$emit('emptyResult', true);
             }
+            else if(this.status === 400){
+              eventBus.$emit('invalidInput', true);
+            }
             else {
               this.err = this.responseText;
               this.showDismissibleAlert = true;
-              console.error(this.status);
+              // console.error(this.status);
             }
           }
         }
