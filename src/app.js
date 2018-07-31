@@ -38,6 +38,14 @@ const routes = [
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path: '/',
+    name: 'app',
+    component: dosearch,
+    meta: {
+      requiresAuth: true
+    }
   }
 ]
 

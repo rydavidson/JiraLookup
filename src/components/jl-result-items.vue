@@ -134,7 +134,7 @@
   }
 
   #result-description {
-    overflow-y: scroll;
+    overflow-y: auto;
     height: 150px;
     width: auto;
     text-overflow: ellipsis;
