@@ -10,10 +10,10 @@
       <b-navbar-nav class="ml-auto">
         <b-navbar-brand>Search Mode: {{mode}} </b-navbar-brand>
         <b-nav-item-dropdown id="searchDropdown" text="Switch Search Mode" right>
-          <b-dropdown-item href="#" v-on:click="mode='Case #'">Salesforce Case</b-dropdown-item>
-          <b-dropdown-item href="#" v-on:click="mode='Account'">Salesforce Account</b-dropdown-item>
+          <b-dropdown-item href="#" @click="switchMode">Salesforce Case</b-dropdown-item>
+          <b-dropdown-item href="#" @click="switchMode">Salesforce Account</b-dropdown-item>
         </b-nav-item-dropdown>
-        <b-nav-item v-if="loggedIn" v-on:click="logOut">Logout</b-nav-item>
+        <b-nav-item v-if="loggedIn" @click="logOut">Logout</b-nav-item>
       </b-navbar-nav>
     </b-collapse>
   </b-navbar>
@@ -34,15 +34,26 @@
       },
       methods: {
         logOut(){
+          this.$parent.$router.replace('/login');
           sessionStorage.removeItem('jwt');
           eventBus.$emit('loggedIn', false);
-          this.$parent.$router.replace('/login');
+        },
+        switchMode(){
+          if(this.mode === 'Case #'){
+            this.mode = 'Account';
+          } else {
+            this.mode = 'Case #';
+          }
+          eventBus.$emit('switchMode', this.mode);
         }
       },
       created() {
         eventBus.$on('loggedIn', (loggedIn) => {
           this.loggedIn = loggedIn;
         });
+
+        if(sessionStorage.getItem('jwt') !== null)
+          this.loggedIn = true;
       }
 
     }

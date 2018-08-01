@@ -1,14 +1,14 @@
 <template>
-  <div>
-    <div class="card" v-if="showResult">
-      <div class="card-header">{{results.key}}</div>
+  <container>
+    <div class="card" v-if="showSingleResult" v-for="result in results" :key="result.key">
+      <div class="card-header">{{result.key}}</div>
       <div class="card-main">
-        <i class="material-icons">check_box</i>
+        <i class="material-icons">{{icon}}</i>
         <div class="main-description">
-          <p><strong>Status: </strong>{{results.status.publicStatus}}</p>
-          <p><strong>Targeted Release: </strong>{{results.fixtarget}}</p>
+          <p><strong>Status: </strong>{{result.status.publicStatus}}</p>
+          <p><strong>Targeted Release: </strong>{{result.fixtarget}}</p>
           <p><strong>Description: </strong></p>
-          <p id="result-description">{{results.title}}</p>
+          <p id="result-description">{{result.title}}</p>
           <!--
           <b-tooltip target="result-description" placement="top" boundary="window">
             {{results.title}}
@@ -17,6 +17,9 @@
         </div>
       </div>
     </div>
+    <div class="multiResult" v-if="showMultiResult">
+
+    </div>
     <b-alert id="small-alert"
              variant="danger"
              dismissible
@@ -24,7 +27,7 @@
              @dismissed="showDismissibleAlert=false">
       {{ err }}
     </b-alert>
-  </div>
+  </container>
 </template>
 
 <script>
@@ -36,48 +39,38 @@
       return {
         title: "",
         resultText: "No results",
-        showResult: false,
+        showSingleResult: false,
+        showMultiResult: false,
         showDismissibleAlert: false,
         err: "",
-        results: {
-          key: "",
-          title: "",
-          priority: "",
-          sfid: "",
-          sfuri: "",
-          fixtarget: "",
-          released: "",
-          status: {
-            name: "",
-            publicStatus: "",
-            description: ""
-          }
-        }
+        icon: "check_box",
+        results:[]
       }
-    },
-    methods: {},
+    }
+
+    ,
+    methods: {}
+    ,
     created() {
       eventBus.$on('resultReturned', (result) => {
+        // console.log(result);
         this.showDismissibleAlert = false;
         this.err = "";
-        this.results.key = result.key;
-        this.results.title = result.title.trim();
-        this.results.priority = result.priority;
-        this.results.sfid = result.sfid;
-        this.results.sfuri = result.sfuri;
-        this.results.fixtarget = result.fixtarget;
-        this.results.released = result.released;
-        this.results.status = result.status;
-        this.showResult = true;
+        this.results = [];
+        self = this;
+        result.results.forEach(function(e){
+          self.results.push(e);
+        });
+        this.showSingleResult = true;
       });
       eventBus.$on('emptyResult', (e) => {
-        this.showResult = false;
+        this.showSingleResult = false;
         this.err = "No results returned";
         this.showDismissibleAlert = true;
       });
       eventBus.$on('invalidInput', (e) => {
         console.log("Invalid input fired");
-        this.showResult = false;
+        this.showSingleResult = false;
         this.err = "Invalid input";
         this.showDismissibleAlert = true;
       });
@@ -89,12 +82,12 @@
 <style scoped>
 
   .card {
-    width: 20%;                 /* Set width of cards */
-    border: 1px solid #3aadef;    /* Set up Border */
-    border-radius: 4px;           /* Slightly Curve edges */
-    overflow: hidden;             /* Fixes the corners */
-    display: flex;                /* Children use Flexbox */
-    flex-direction: column;       /* Rotate Axis */
+    width: 20%;
+    border: 1px solid #3aadef;
+    border-radius: 4px;
+    overflow: hidden;
+    display: inline-block;
+    flex-direction: column;
     margin: auto;
     height: 20%;
     text-overflow: ellipsis;
@@ -111,11 +104,11 @@
   }
 
   .card-main {
-    display: flex;              /* Children use Flexbox */
-    flex-direction: column;     /* Rotate Axis to Vertical */
-    justify-content: center;    /* Group Children in Center */
-    align-items: center;        /* Group Children in Center (+axis) */
-    padding: 15px 0 0 0;            /* Add padding to the top/bottom */
+    display: flex; /* Children use Flexbox */
+    flex-direction: column; /* Rotate Axis to Vertical */
+    justify-content: center; /* Group Children in Center */
+    align-items: center; /* Group Children in Center (+axis) */
+    padding: 15px 0 0 0; /* Add padding to the top/bottom */
   }
 
   .material-icons {
@@ -140,7 +133,7 @@
     text-overflow: ellipsis;
   }
 
-  #small-alert{
+  #small-alert {
     width: 20%;
     min-width: 100px;
     margin: auto;

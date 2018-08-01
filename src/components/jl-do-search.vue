@@ -16,7 +16,7 @@
     </b-alert>
     <br/>
     <div id="results">
-      <resultitems></resultitems>
+      <resultitems v-if="showResults"></resultitems>
     </div>
   </div>
 </template>
@@ -34,7 +34,8 @@
         sfid: "",
         showDismissibleAlert: false,
         err: "",
-        devLogin: false
+        devLogin: true,
+        showResults: true
       }
     },
     methods: {
@@ -49,10 +50,10 @@
         //   this.showDismissibleAlert = true;
         //   return;
         // }
-        var api = "https://jiralookup-backend-dev.herokuapp.com/search/";
+        var api = "https://jiralookup-backend-dev.herokuapp.com/search/case/";
 
         if(this.devLogin){
-          api = "http://localhost:3001/search/"
+          api = "http://localhost:3001/search/case/"
         }
 
         var xhr = Auth.createCORSRequest("GET", api + this.sfid);
@@ -68,9 +69,11 @@
               eventBus.$emit('resultReturned', res);
             }
             else if(this.status === 204){
+              this.showResults = false;
               eventBus.$emit('emptyResult', true);
             }
             else if(this.status === 400){
+              this.showResults = false;
               eventBus.$emit('invalidInput', true);
             }
             else {
@@ -85,7 +88,7 @@
     },
     created() {
       eventBus.$on('devLogin', (devLogin) => {
-        this.devLogin = true;
+        this.devLogin = devLogin;
       });
     }
   }

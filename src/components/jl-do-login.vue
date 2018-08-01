@@ -73,6 +73,8 @@
 
             if(self.form.username.indexOf("dev") > 0){
               eventBus.$emit('devLogin', true);
+            } else{
+              eventBus.$emit('devLogin', false);
             }
             //alert(JSON.stringify(jwt));
           }
