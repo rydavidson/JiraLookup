@@ -34,7 +34,7 @@
         sfid: "",
         showDismissibleAlert: false,
         err: "",
-        devLogin: true,
+        devLogin: false,
         showResults: true
       }
     },
