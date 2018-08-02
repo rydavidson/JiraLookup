@@ -1,18 +1,15 @@
 import Vue from 'vue'
 import App from './App.vue'
-import Navbar from './components/Navbar.vue'
-import ResultView from './components/ResultView.vue'
-import Login from './components/Login.vue'
+import navbar from './components/jl-navbar.vue'
+import dosearch from './components/jl-do-search.vue'
+import resultitems from './components/jl-result-items.vue'
+import dologin from './components/jl-do-login.vue'
 import VueRouter from 'vue-router'
 import BootstrapVue from 'bootstrap-vue'
-import Auth from './auth.js';
 
 // css
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
-import './app.css'
-
-const crypto = require('crypto');
 
 Vue.use(VueRouter);
 Vue.use(BootstrapVue);
@@ -21,15 +18,31 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: Login,
+    component: dologin,
     meta: {
       guest: true
     }
   },
   {
+    path: '/search',
+    name: 'search',
+    component: dosearch,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/result',
+    name: 'result',
+    component: resultitems,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: '/',
-    name: 'view',
-    component: ResultView,
+    name: 'app',
+    component: dosearch,
     meta: {
       requiresAuth: true
     }
@@ -49,7 +62,6 @@ router.beforeEach((to, from, next) => {
         params: { nextUrl: to.fullPath }
       })
     } else {
-      //let user = JSON.parse(localStorage.getItem('user'));
       next()
     }
   } else if(to.matched.some(record => record.meta.guest)) {
@@ -57,7 +69,7 @@ router.beforeEach((to, from, next) => {
       next()
     }
     else{
-      next({ name: 'view'})
+      next({ name: from})
     }
   }else {
     next()
@@ -72,14 +84,16 @@ const app = new Vue({
 }).$mount('#app')
 
 const nav = new Vue({
-  render: h => h(Navbar),
+  render: h => h(navbar),
   router
 }).$mount('#nav')
 
 const login = new Vue({
-  render: h => h(Login),
+  render: h => h(dologin),
   router
 })
+
+
 
 
 // const login = new Vue({
