@@ -5,16 +5,14 @@
       <div class="card-main">
         <i class="material-icons">{{result.status.icon}}</i>
         <div class="main-description">
-          <p><strong>Status: </strong>{{result.status.publicStatus}}</p>
+          <p id="public-status"><strong>Status: </strong>{{result.status.publicStatus}}</p>
+          <b-tooltip target="public-status">
+            {{result.status.description}}
+          </b-tooltip>
           <p><strong>Last Updated: </strong>{{result.updated}}</p>
           <p><strong>Targeted Release: </strong>{{result.fixtarget}}</p>
           <p><strong>Description: </strong></p>
           <p id="result-description">{{result.title}}</p>
-          <!--
-          <b-tooltip target="result-description" placement="top" boundary="window">
-            {{results.title}}
-          </b-tooltip>
-          -->
         </div>
       </div>
     </div>
