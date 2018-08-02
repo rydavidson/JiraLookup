@@ -52,9 +52,9 @@
         // }
         var api = "https://jiralookup-backend-dev.herokuapp.com/search/case/";
 
-        if(this.devLogin){
-          api = "http://localhost:3001/search/case/"
-        }
+        // if(this.devLogin){
+        //   api = "http://localhost:3001/search/case/"
+        // }
 
         var xhr = Auth.createCORSRequest("GET", api + this.sfid);
 
