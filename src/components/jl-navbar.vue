@@ -5,13 +5,11 @@
 
     <b-navbar-brand href="#">Jira Lookup</b-navbar-brand>
     <b-collapse is-nav id="nav_collapse">
-
-      <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
         <b-navbar-brand>Search Mode: {{mode}} </b-navbar-brand>
-        <b-nav-item-dropdown id="searchDropdown" text="Switch Search Mode" right>
-          <b-dropdown-item href="#" @click="switchMode">Salesforce Case</b-dropdown-item>
-          <b-dropdown-item href="#" @click="switchMode">Salesforce Account</b-dropdown-item>
+        <b-nav-item-dropdown v-if="caseModeEnabled && accountModeEnabled" id="searchDropdown" text="Switch Search Mode" right>
+          <b-dropdown-item v-if="caseModeEnabled" href="#" @click="switchMode">Salesforce Case</b-dropdown-item>
+          <b-dropdown-item v-if="accountModeEnabled" href="#" @click="switchMode">Salesforce Account</b-dropdown-item>
         </b-nav-item-dropdown>
         <b-nav-item v-if="loggedIn" @click="logOut">Logout</b-nav-item>
       </b-navbar-nav>
@@ -29,7 +27,9 @@
       data() {
           return{
             mode: "Case #",
-            loggedIn: false
+            loggedIn: false,
+            caseModeEnabled: true,
+            accountModeEnabled: false
           }
       },
       methods: {

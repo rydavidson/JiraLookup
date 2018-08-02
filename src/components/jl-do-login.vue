@@ -28,7 +28,6 @@
       <br/>
       <span>
         <b-button type="submit" style="background-color: #002c76">Submit</b-button>
-        <br/>
         <b-button type="reset" style="background-color: #EE7622">Clear</b-button>
       </span>
     </b-form>
@@ -56,10 +55,8 @@
     methods: {
       onSubmit(evt) {
         evt.preventDefault();
-        //alert(JSON.stringify(this.form));
         var hash = crypto.createHash('sha256');
         var pass = hash.update(this.form.password).digest('hex');
-        //console.log("User pass hash: " + pass);
         var self = this;
         Auth.authenticateUser(this.form.username, pass, function (jwt) {
           if (jwt instanceof Error) {
@@ -76,7 +73,6 @@
             } else{
               eventBus.$emit('devLogin', false);
             }
-            //alert(JSON.stringify(jwt));
           }
         });
       },
@@ -104,6 +100,10 @@
     width: 20%;
     min-width: 100px;
     margin: auto;
+  }
+
+  button {
+    padding: 5px;
   }
 
 </style>

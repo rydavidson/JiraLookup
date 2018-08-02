@@ -1,11 +1,12 @@
 <template>
   <div>
     <b-form @submit="onSubmit">
-    <b-form-group id="search">
-      <b-form-input size="sm" class="mr-sm-2" type="text" placeholder="Enter Salesforce Case Number" v-model="sfid" required></b-form-input>
-      <br/>
-      <b-button size="lg" style="background-color: #002c76" type="submit">Search</b-button>
-    </b-form-group>
+      <b-form-group id="search">
+        <b-form-input size="sm" class="mr-sm-2" type="text" placeholder="Enter Salesforce Case Number" v-model="sfid"
+                      required></b-form-input>
+        <br/>
+        <b-button size="lg" style="background-color: #002c76" type="submit">Search</b-button>
+      </b-form-group>
     </b-form>
     <b-alert id="small-alert"
              variant="danger"
@@ -35,6 +36,7 @@
         showDismissibleAlert: false,
         err: "",
         devLogin: false,
+        localLogin: false,
         showResults: true
       }
     },
@@ -50,11 +52,13 @@
         //   this.showDismissibleAlert = true;
         //   return;
         // }
-        var api = "https://jiralookup-backend-dev.herokuapp.com/search/case/";
+        var api = process.env.API_URL || "https://jiralookup-backend.herokuapp.com";
 
-        // if(this.devLogin){
-        //   api = "http://localhost:3001/search/case/"
-        // }
+        if(this.devLogin){
+          api = process.env.API_URL || "https://jiralookup-backend-dev.herokuapp.com/";
+        }
+
+        api += "/search/case/";
 
         var xhr = Auth.createCORSRequest("GET", api + this.sfid);
 
@@ -68,11 +72,11 @@
               var res = JSON.parse(this.responseText);
               eventBus.$emit('resultReturned', res);
             }
-            else if(this.status === 204){
+            else if (this.status === 204) {
               this.showResults = false;
               eventBus.$emit('emptyResult', true);
             }
-            else if(this.status === 400){
+            else if (this.status === 400) {
               this.showResults = false;
               eventBus.$emit('invalidInput', true);
             }

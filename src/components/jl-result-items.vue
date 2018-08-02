@@ -1,11 +1,12 @@
 <template>
-  <container>
+  <div>
     <div class="card" v-if="showSingleResult" v-for="result in results" :key="result.key">
       <div class="card-header">{{result.key}}</div>
       <div class="card-main">
-        <i class="material-icons">{{icon}}</i>
+        <i class="material-icons">{{result.status.icon}}</i>
         <div class="main-description">
           <p><strong>Status: </strong>{{result.status.publicStatus}}</p>
+          <p><strong>Last Updated: </strong>{{result.updated}}</p>
           <p><strong>Targeted Release: </strong>{{result.fixtarget}}</p>
           <p><strong>Description: </strong></p>
           <p id="result-description">{{result.title}}</p>
@@ -17,9 +18,6 @@
         </div>
       </div>
     </div>
-    <div class="multiResult" v-if="showMultiResult">
-
-    </div>
     <b-alert id="small-alert"
              variant="danger"
              dismissible
@@ -27,7 +25,7 @@
              @dismissed="showDismissibleAlert=false">
       {{ err }}
     </b-alert>
-  </container>
+  </div>
 </template>
 
 <script>
@@ -40,10 +38,8 @@
         title: "",
         resultText: "No results",
         showSingleResult: false,
-        showMultiResult: false,
         showDismissibleAlert: false,
         err: "",
-        icon: "check_box",
         results:[]
       }
     }
@@ -57,7 +53,7 @@
         this.showDismissibleAlert = false;
         this.err = "";
         this.results = [];
-        self = this;
+        var self = this;
         result.results.forEach(function(e){
           self.results.push(e);
         });
@@ -83,13 +79,14 @@
 
   .card {
     width: 20%;
+    min-width: 25rem;
     border: 1px solid #3aadef;
     border-radius: 4px;
     overflow: hidden;
     display: inline-block;
     flex-direction: column;
     margin: auto;
-    height: 20%;
+    max-height: 80%;
     text-overflow: ellipsis;
   }
 
@@ -104,11 +101,12 @@
   }
 
   .card-main {
-    display: flex; /* Children use Flexbox */
-    flex-direction: column; /* Rotate Axis to Vertical */
-    justify-content: center; /* Group Children in Center */
-    align-items: center; /* Group Children in Center (+axis) */
-    padding: 15px 0 0 0; /* Add padding to the top/bottom */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 0 0 0;
+    max-height: 60vh;
   }
 
   .material-icons {
@@ -121,16 +119,17 @@
     color: #1514d3;
     font-size: 12px;
     text-align: center;
-    height: auto;
     min-width: 0;
     min-height: 0;
+    max-width: 100%;
+    max-height: 100%;
   }
 
   #result-description {
-    overflow-y: auto;
-    height: 150px;
+    overflow: auto;
+    -ms-overflow-style: auto;
+    height: 100%;
     width: auto;
-    text-overflow: ellipsis;
   }
 
   #small-alert {
@@ -139,8 +138,16 @@
     margin: auto;
   }
 
+  #result-description{
+    height: 50vh;
+  }
+
   p {
     margin-bottom: 0rem;
+  }
+
+  nav{
+    height: auto;
   }
 
 </style>
