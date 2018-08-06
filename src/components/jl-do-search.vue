@@ -36,7 +36,7 @@
         showDismissibleAlert: false,
         err: "",
         devLogin: false,
-        localLogin: false,
+        localLogin: true,
         showResults: true
       }
     },
@@ -49,6 +49,10 @@
 
         if(this.devLogin){
           api = process.env.API_URL || "https://jiralookup-backend-dev.herokuapp.com";
+        }
+
+        if(this.localLogin){
+          api = "http://localhost:3001";
         }
 
         api += "/search/case/";
