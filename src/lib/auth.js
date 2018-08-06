@@ -1,6 +1,8 @@
 
 function authenticateUser (username, passhash, callback) {
 
+  username = username.toLowerCase();
+
   var api = process.env.API_URL || "https://jiralookup-backend.herokuapp.com";
 
   if(username.indexOf("dev") !== -1){
