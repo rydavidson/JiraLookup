@@ -5,10 +5,12 @@
       <div class="card-main">
         <i class="material-icons">{{result.status.icon}}</i>
         <div class="main-description">
-          <p id="public-status"><strong>Status: </strong>{{result.status.publicStatus}}</p>
+          <p id="public-status" v-b-tooltip.hover :title="result.status.description"><strong>Status: </strong>{{result.status.publicStatus}}</p>
+          <!--
           <b-tooltip target="public-status">
             {{result.status.description}}
           </b-tooltip>
+          -->
           <p><strong>Last Updated: </strong>{{result.updated}}</p>
           <p><strong>Targeted Release: </strong>{{result.fixtarget}}</p>
           <p><strong>Description: </strong></p>
@@ -38,12 +40,21 @@
         showSingleResult: false,
         showDismissibleAlert: false,
         err: "",
-        results:[]
+        results: []
       }
     }
 
     ,
-    methods: {}
+    methods: {
+      escapeHtml(unsafe) {
+        return unsafe
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+    }
     ,
     created() {
       eventBus.$on('resultReturned', (result) => {
@@ -52,8 +63,9 @@
         this.err = "";
         this.results = [];
         var self = this;
-        result.results.forEach(function(e){
+        result.results.forEach(function (e) {
           var regger = /\r?\n|\r/g;
+          e.title = self.escapeHtml(e.title);
           // console.log(regger.test(e.title));
           e.title = e.title.replace(regger, "<br/>");
           // console.log(e.title);
@@ -141,15 +153,15 @@
     margin: auto;
   }
 
-  #result-description{
-    height: 50vh;
+  #result-description {
+    max-height: 45vh;
   }
 
   p {
     margin-bottom: 0rem;
   }
 
-  nav{
+  nav {
     height: auto;
   }
 
