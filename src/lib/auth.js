@@ -3,10 +3,12 @@ function authenticateUser (username, passhash, callback) {
 
   username = username.toLowerCase();
 
-  var api = process.env.API_URL || "https://jiralookup-backend.herokuapp.com";
+  var api = "https://jiralookup-backend.herokuapp.com";
+  var devAPI = process.env.API_URL;
 
   if(username.indexOf("dev") !== -1){
-    api = process.env.API_URL || "https://jiralookup-backend-dev.herokuapp.com";
+    // console.log(process.env.API_URL);
+    api = "https://jiralookup-backend-dev.herokuapp.com";
   }
 
     if(username.length > 0){
