@@ -36,7 +36,7 @@
         showDismissibleAlert: false,
         err: "",
         devLogin: false,
-        localLogin: true,
+        localLogin: false,
         showResults: true
       }
     },
