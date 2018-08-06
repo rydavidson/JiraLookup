@@ -54,7 +54,7 @@
         var self = this;
         result.results.forEach(function(e){
           var regger = /\r?\n|\r/g;
-          console.log(regger.test(e.title));
+          // console.log(regger.test(e.title));
           e.title = e.title.replace(regger, "<br/>");
           // console.log(e.title);
           //e.title = "<div>" + e.title + "</div>";

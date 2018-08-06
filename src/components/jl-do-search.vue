@@ -45,17 +45,10 @@
 
         evt.preventDefault();
 
-        console.log("Submit clicked");
-        //
-        // if(this.sfid.length === 0){
-        //   this.err = "You must provide a case number to search for";
-        //   this.showDismissibleAlert = true;
-        //   return;
-        // }
         var api = process.env.API_URL || "https://jiralookup-backend.herokuapp.com";
 
         if(this.devLogin){
-          api = process.env.API_URL || "https://jiralookup-backend-dev.herokuapp.com/";
+          api = process.env.API_URL || "https://jiralookup-backend-dev.herokuapp.com";
         }
 
         api += "/search/case/";
