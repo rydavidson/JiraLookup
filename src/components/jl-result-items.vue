@@ -12,7 +12,7 @@
           <p><strong>Last Updated: </strong>{{result.updated}}</p>
           <p><strong>Targeted Release: </strong>{{result.fixtarget}}</p>
           <p><strong>Description: </strong></p>
-          <p id="result-description">{{result.title}}</p>
+          <p id="result-description" v-html="result.title"></p>
         </div>
       </div>
     </div>
@@ -53,6 +53,11 @@
         this.results = [];
         var self = this;
         result.results.forEach(function(e){
+          var regger = /\r?\n|\r/g;
+          console.log(regger.test(e.title));
+          e.title = e.title.replace(regger, "<br/>");
+          // console.log(e.title);
+          //e.title = "<div>" + e.title + "</div>";
           self.results.push(e);
         });
         this.showSingleResult = true;
