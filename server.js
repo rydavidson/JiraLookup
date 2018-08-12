@@ -1,21 +1,38 @@
-var express = require("express");
+// modules
 
-var app = express();
+require('dotenv').config();
+const express = require("express");
+const bodyParser = require('body-parser');
 
-var router = new express.Router();
+// express config
 
-app.use(express.static(__dirname + '/public/'));
+const app = express();
+const port = process.env.PORT || 3001;
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
-var port = process.env.PORT || 3000;
+// routers
 
-app.use(router);
+const searchRouter = require('./api/routes/searchRoute.js');
+const authRouter = require('./api/routes/authRoute.js');
+const adminRouter = require('./api/routes/adminRoute.js');
 
-router.get('/',function(req,res){
-  res.sendFile('index.html');
+// middleware
+
+app.use(function(req, res, next){
+if(req.url === '/')
+    res.redirect('/app');
+    next();
 });
 
+// routes
+
+app.use('/app',express.static(__dirname + "/ui/public"));
+app.use('/api/search', searchRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/admin', adminRouter);
+
+// startup
+
 app.listen(port);
-
-console.log("Running");
-
-
+console.log("Server listening on port " + port);
