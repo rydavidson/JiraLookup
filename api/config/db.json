@@ -1,0 +1,18 @@
+{
+  "dev": {
+    "host": "jiralookup-dev-pjq7c.gcp.mongodb.net",
+    "database": "dev",
+    "user": "acceladb",
+    "password": "",
+    "retryWrites": true,
+    "prefix": "mongodb+srv://"
+  },
+  "prod": {
+    "host": "jiralookup-dev-pjq7c.gcp.mongodb.net",
+    "database": "prod",
+    "user": "acceladb",
+    "password": "",
+    "retryWrites": true,
+    "prefix": "mongodb+srv://"
+  }
+}
