@@ -1,24 +1,9 @@
 const mongoose = require('mongoose');
 const config = require('../config/db.json');
 
-let connected = false;
+var connected = false;
 
-function connect() {
-    return new Promise(function (resolve, reject) {
-        mongoose.connect(getConnectionString()).then(
-            () => {
-                connected = true;
-                console.log("Database connection established");
-                resolve();
-            },
-            err => {
-                reject(err);
-            }
-        )
-    });
-}
-
-function getConnectionString() {
+function getConnectionString(){
 
     let cfg = config.dev;
 
@@ -27,14 +12,24 @@ function getConnectionString() {
 
     cfg.password = process.env.ATLAS_PASSWORD;
 
-    let conn = `${cfg.prefix}${cfg.user}:${cfg.password}@${cfg.host}/${cfg.database}retryWrites=${cfg.retryWrites}`
+    let conn = `${cfg.prefix}${cfg.user}:${cfg.password}@${cfg.host}/${cfg.database}?retryWrites=${cfg.retryWrites}`
     console.log(conn);
     return conn;
 }
 
-module.exports = {
-    connect: connect(),
-    getConnectionString: getConnectionString(),
-    connected: connected
+exports.connect = function() {
+    return new Promise(function (resolve, reject) {
+        mongoose.connect(getConnectionString()).then(
+            () => {
+                console.log("Database connection established");
+                resolve();
+            },
+            err => {
+                console.log(err);
+                reject(err);
+            }
+        )
+    });
 }
+exports.connected = connected;
 

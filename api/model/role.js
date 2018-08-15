@@ -1,19 +1,24 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const scope = require('./scope.js');
-const scopeSchema = scope.scopeSchema;
+const ObjectId = Schema.Types.ObjectId;
 
 const roleSchema = new Schema({
     name: { type: String, required: true},
-    scopes: [scopeSchema]
+    scopes: [{type: ObjectId, ref: "scope"}]
 });
 
-function getModel(callback){
+exports.getModel = function(callback){
     callback(mongoose.model('role', roleSchema));
 }
 
-function getSchema(callback){
-    callback(roleSchema);
+exports.getSchema = function(){
+    return roleSchema;
 }
 
-module.exports=roleSchema;
+exports.getScopes = function(roleObjectId){
+    return new Promise(function(resolve, reject){
+        
+    })
+}
+
+exports.roleSchema = roleSchema;

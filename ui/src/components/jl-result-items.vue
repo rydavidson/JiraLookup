@@ -1,16 +1,14 @@
 <template>
   <div>
     <div class="card" v-if="showSingleResult" v-for="result in results" :key="result.key">
-      <div class="card-header">{{result.key}}</div>
+      <div class="card-header">
+        <p><a :href="result.jirauri" target="_blank">Jira Item: {{result.key}} <span class="fas fa-external-link-alt"></span></a></p>
+        <p v-if="result.sfuri"><a :href="result.sfuri" target="_blank">Case #: {{result.sfid}} <span class="fas fa-external-link-alt"></span></a></p>
+      </div>
       <div class="card-main">
         <i class="material-icons">{{result.status.icon}}</i>
         <div class="main-description">
           <p id="public-status" v-b-tooltip.hover :title="result.status.description"><strong>Status: </strong>{{result.status.publicStatus}}</p>
-          <!--
-          <b-tooltip target="public-status">
-            {{result.status.description}}
-          </b-tooltip>
-          -->
           <p><strong>Last Updated: </strong>{{result.updated}}</p>
           <p><strong>Targeted Release: </strong>{{result.fixtarget}}</p>
           <p><strong>Description: </strong></p>

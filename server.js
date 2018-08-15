@@ -3,6 +3,7 @@
 require('dotenv').config();
 const express = require("express");
 const bodyParser = require('body-parser');
+const db = require('./api/lib/mongolib');
 
 // express config
 
@@ -34,5 +35,6 @@ app.use('/api/admin', adminRouter);
 
 // startup
 
+db.connect();
 app.listen(port);
 console.log("Server listening on port " + port);

@@ -9,7 +9,8 @@ function authenticateUser (username, passhash, callback) {
   if(username.indexOf("dev") !== -1){
     // console.log(process.env.API_URL);
     api = "https://jiralookup-backend-dev.herokuapp.com";
-    // api = "http://localhost:3001";
+
+    api = "http://localhost:3001";
   }
 
 
