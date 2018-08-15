@@ -1,54 +1,64 @@
 const jwt = require('jsonwebtoken');
 const constants = require('../config/enums.json');
 const user = require('../model/user.js');
+const crypto = require('crypto');
 const scope = require('../model/scope.js');
 
-exports.authenticateUser = function(username, hashedPassword, callback){
+exports.authenticateUser = function (username, hashedPassword, callback) {
 
     const hasher = crypto.createHash('sha256');
 
-    user.getUser(username, function(userObj){
+    user.getUser(username, function (userObj) {
 
-        if(isErr(userObj)){
+        if (isErr(userObj)) {
             callback(userObj);
             return;
         }
-        if(process.env.NODE_ENV === "development"){
-            try{
-                if(username === process.env.ACCELADEVUSER){
+        if (process.env.NODE_ENV === "development") {
+            try {
+                if (username === process.env.ACCELADEVUSER) {
                     console.debug("Attempting password validation");
-                    if(hashedPassword === hasher.update(process.env.DEVPASSWORD).digest('hex')){
-                        callback(jwt.sign({"user": username}, process.env.SECRET));
+                    if (hashedPassword === hasher.update(process.env.DEVPASSWORD).digest('hex')) {
+                        let roles = [];
+                        let scopes = [];
+
+                        console.log(userObj);
+                        userObj.roles.forEach(role => {
+                            if (roles.indexOf(role) === -1)
+                                roles.push(role);
+                            console.log(role);
+                        });
+                        callback(jwt.sign({ "user": username, "roles": roles }, process.env.SECRET, {expiresIn: 3600}));
                     }
-                    else{
+                    else {
                         callback(constants.credentialsIncorrect);
                     }
                 }
-                else{
-                    console.debug("username: " + username + " is incorrect, expected " + process.env.ACCELAUSER)
+                else {
+                    console.debug("username: " + username + " is incorrect, expected " + process.env.ACCELADEVUSER)
                     callback(constants.credentialsIncorrect);
                 }
             }
-            catch(err){
+            catch (err) {
                 callback(constants.authError);
             }
         } else {
-            try{
-                if(userObj.username === process.env.ACCELAUSER){
+            try {
+                if (userObj.username === process.env.ACCELAUSER) {
                     console.debug("Attempting password validation");
-                    if(hashedPassword === hasher.update(process.env.PASSWORD).digest('hex')){
-                        callback(jwt.sign({"user": username}, process.env.SECRET));
+                    if (hashedPassword === hasher.update(process.env.PASSWORD).digest('hex')) {
+                        callback(jwt.sign({ "user": username }, process.env.SECRET));
                     }
-                    else{
+                    else {
                         callback(constants.credentialsIncorrect);
                     }
                 }
-                else{
+                else {
                     console.debug("username: " + username + " is incorrect, expected " + process.env.ACCELAUSER)
                     callback(constants.credentialsIncorrect);
                 }
             }
-            catch(err){
+            catch (err) {
                 callback(constants.authError);
             }
         }
@@ -57,49 +67,55 @@ exports.authenticateUser = function(username, hashedPassword, callback){
 
 }
 
-exports.authenticateUserLocal = function(username, hashedPassword, callback){
+exports.authenticateUserLocal = function (username, hashedPassword, callback) {
 
     const hasher = crypto.createHash('sha256');
 
-    if(process.env.NODE_ENV === "development"){
-        try{
-            if(username === process.env.ACCELADEVUSER){
+    if (process.env.NODE_ENV === "development") {
+        try {
+            if (username === process.env.ACCELADEVUSER) {
                 console.debug("Attempting password validation");
-                if(hashedPassword === hasher.update(process.env.DEVPASSWORD).digest('hex')){
-                    callback(jwt.sign({"user": username}, process.env.SECRET));
+                if (hashedPassword === hasher.update(process.env.DEVPASSWORD).digest('hex')) {
+                    callback(jwt.sign({ "user": username }, process.env.SECRET));
                 }
-                else{
+                else {
                     callback(constants.credentialsIncorrect);
                 }
             }
-            else{
+            else {
                 console.debug("username: " + username + " is incorrect, expected " + process.env.ACCELAUSER)
                 callback(constants.credentialsIncorrect);
             }
         }
-        catch(err){
+        catch (err) {
             callback(constants.authError);
         }
     } else {
-        try{
-            if(username === process.env.ACCELAUSER){
+        try {
+            if (username === process.env.ACCELAUSER) {
                 console.debug("Attempting password validation");
-                if(hashedPassword === hasher.update(process.env.PASSWORD).digest('hex')){
-                    callback(jwt.sign({"user": username}, process.env.SECRET));
+                if (hashedPassword === hasher.update(process.env.PASSWORD).digest('hex')) {
+                    callback(jwt.sign({ "user": username }, process.env.SECRET));
                 }
-                else{
+                else {
                     callback(constants.credentialsIncorrect);
                 }
             }
-            else{
+            else {
                 console.debug("username: " + username + " is incorrect, expected " + process.env.ACCELAUSER)
                 callback(constants.credentialsIncorrect);
             }
         }
-        catch(err){
+        catch (err) {
             callback(constants.authError);
         }
     }
+}
+
+exports.authorizeUser = function (_jwt, scope, callback){
+    let token = jwt.verify(_jwt, secret);
+
+
 }
 
 

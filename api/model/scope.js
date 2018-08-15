@@ -1,23 +1,19 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId;
+const scopeSchema = new Schema();
 
-
-const scopeSchema = new Schema({
-    id: { type: String, required: true},
-    inheritedScopes: [scopeSchema]
+scopeSchema.add({
+    id: { type: String, required: true },
+    inheritedScopes: [{type: ObjectId, ref: "scope"}]
 })
 
-function getModel(callback){
+exports.getModel = function (callback) {
     callback(mongoose.model('scope', scopeSchema));
 }
 
-function getSchema(callback){
-    callback(scopeSchema);
+exports.getSchema = function () {
+    return scopeSchema;
 }
 
-
-module.exports = {
-    scopeSchema: scopeSchema,
-    getSchema: getSchema,
-    getModel: getModel
-};
+module.exports.scopeSchema = scopeSchema;

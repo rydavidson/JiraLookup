@@ -89,7 +89,7 @@
   }
 </script>
 
-<style scoped>
+<style>
 
   #loginGroup{
     width: 20%;
