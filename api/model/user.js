@@ -32,9 +32,20 @@ function getUser(username, callback){
     } else {
         let userModel = getModel();
         console.log("Finding user");
-        userModel.findOne({ username: username}, function(err, user){
+        userModel.findOne({ username: username})
+        .populate({
+            path: 'roles',
+            populate: {
+                path: 'scopes',
+                populate: {
+                    path: 'inheritedScopes'
+                }
+            }
+        })
+        .exec(function(err, user){
             if(!err){
                 console.log("Got user");
+                console.log(JSON.stringify(user));
                 callback(user);
             } else {
                 console.log(err);
