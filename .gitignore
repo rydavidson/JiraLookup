@@ -35,4 +35,3 @@ dist/
 
 # Dev
 .env
-webpack.config.js
