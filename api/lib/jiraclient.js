@@ -1,12 +1,14 @@
 const request = require('request');
-const constants = require('./constants.js');
+const constants = require('../config/enums.json');
 const mappings = require('./jiraStatusMappings.js');
+const config = require('./configs/jiraConfig.json');
+const logger = require('../lib/logger.js');
 // require('request').debug = true
 
 exports.getJiraItem = function (searchType, searchKey, callback) {
 
     let jiraKeyOptions = {
-        uri: process.env.JIRA_API_URL + "/search?jql=key=" + searchKey,
+        uri: config.jiraKeyUrl + searchKey,
         method: 'GET',
         headers: {
             "Authorization": "Basic " + process.env.JIRA_AUTH_TOKEN,
@@ -15,7 +17,7 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
     };
 
     let sfidOptions = {
-        uri: process.env.JIRA_API_URL + "search?jql=cf[10600]~" + searchKey,
+        uri: config.sfidUrl + searchKey,
         method: 'GET',
         headers: {
             "Authorization": "Basic " + process.env.JIRA_AUTH_TOKEN,
@@ -28,16 +30,14 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
     switch(String(searchType)){
         case String(constants.sfSearchType.searchType): {
             options = sfidOptions;
-            console.log(JSON.stringify(options));
             break;
         }
         case String(constants.jiraSearchType.searchType): {
             options = jiraKeyOptions;
-            console.log(JSON.stringify(options))
             break;
         }
         default: {
-            // console.log("Entered default scope");
+            logger.warn("Unable to determine search type for key " + searchKey);
             let reg1 = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]/gm;
 
             let m = reg1.exec(searchKey);
@@ -52,7 +52,7 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
 
     }
 
-    console.log("Requesting " + searchKey + " at " + options.uri);
+    logger.debug(options.method + " " + options.uri);
 
     request(options, function (err, res, body) {
 
@@ -77,7 +77,7 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
                     jira_item.sfid = issue.fields.customfield_10600;
                     jira_item.sfuri = issue.fields.customfield_10906;
                     jira_item.summary = issue.fields.summary;
-                    jira_item.jirauri = process.env.JIRA_ROOT_URL + "browse/" + issue.key;
+                    jira_item.jirauri = config.rootUrl + "browse/" + issue.key;
                     jira_item.updated = new Date(issue.fields.updated).toDateString();
                     if (issue.fields.fixVersions.length > 0) {
                         jira_item.fixtarget = issue.fields.fixVersions[0].name;
@@ -110,12 +110,13 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
             try {
                 callback(err, err.message);
             } catch (error) {
-                console.error(error);
+                logger.error(error);
                 try {
                     callback(err, "");
                 } catch (error2) {
-                    console.error(error2);
-                    callback(new Error("Everything went null all of a sudden"), constants.genericError);
+                    logger.error(error2);
+                    logger.error("If this error is logged, something is very wrong");
+                    callback(new Error("If this error is logged, something is very wrong"), constants.genericError);
                 }
             }
         }
@@ -125,7 +126,7 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
 
 function mapStatus(issue, callback) {
 
-    for (var stat in mappings) {
+    for (let stat in mappings) {
         if (issue.fields.status.name === mappings[stat].name) {
             if (issue.fields.project.key === "ENGSUPP") {
                 callback(mappings["ENGSUPP"]);

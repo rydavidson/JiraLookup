@@ -35,3 +35,4 @@ dist/
 
 # Dev
 .env
+devtoprod.bat

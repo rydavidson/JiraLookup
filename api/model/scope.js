@@ -9,7 +9,7 @@ scopeSchema.add({
 })
 
 exports.getModel = function (callback) {
-    callback(mongoose.model('scope', scopeSchema));
+    return mongoose.model('scope', scopeSchema);
 }
 
 exports.getSchema = function () {

@@ -2,43 +2,30 @@ const jwt = require('jsonwebtoken');
 const constants = require('../config/enums.json');
 const user = require('../model/user.js');
 const crypto = require('crypto');
-const scope = require('../model/scope.js');
+const logger = require('./logger.js');
 
 exports.authenticateUser = function (username, hashedPassword, callback) {
-
-    const hasher = crypto.createHash('sha256');
 
     user.getUser(username, function (userObj) {
 
         if (isErr(userObj)) {
+            logger.error(userObj);
             callback(userObj);
             return;
         }
-        let usernameToCheck = process.env.ACCELAUSER;
-
-        if (process.env.NODE_ENV === "development") {
-            usernameToCheck = process.env.ACCELADEVUSER;
-        }
         try {
-                console.debug("Attempting password validation");
-                if (hashedPassword === userObj.password) {
-                    let roles = [];
-                    let scopes = [];
+                logger.debug("Checking password");
 
-                    console.log(userObj);
-                    userObj.roles.forEach(role => {
-                        if (roles.indexOf(role) === -1)
-                            roles.push(role);
-                        console.log(role);
-                    });
-                    callback(jwt.sign({ "user": username, "roles": roles }, process.env.SECRET, { expiresIn: 3600 }));
+                if (hashedPassword.toUpperCase() === userObj.password.toUpperCase()) {
+                    callback(jwt.sign({ "user": username, "roles": userObj.roles}, process.env.SECRET, { expiresIn: 3600 }));
                 }
                 else {
+                    logger.error(constants.credentialsIncorrect);
                     callback(constants.credentialsIncorrect);
                 }
-            
         }
         catch (err) {
+            logger.error(err);
             callback(constants.authError);
         }
     })
@@ -48,8 +35,6 @@ exports.authenticateUser = function (username, hashedPassword, callback) {
 
 exports.authorizeUser = function (_jwt, scope, callback) {
     let token = jwt.verify(_jwt, secret);
-
-
 }
 
 exports.authenticateUserLocal = function (username, hashedPassword, callback) {
