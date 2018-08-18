@@ -67,12 +67,6 @@
             sessionStorage.setItem('jwt', jwt);
             self.$parent.$router.replace('/search');
             eventBus.$emit('loggedIn', true);
-
-            if(self.form.username.indexOf("dev") > 0){
-              eventBus.$emit('devLogin', true);
-            } else{
-              eventBus.$emit('devLogin', false);
-            }
           }
         });
       },

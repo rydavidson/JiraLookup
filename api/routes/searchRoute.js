@@ -3,6 +3,7 @@ const jira = require('../lib/jiraclient.js');
 const config = require('./configs/searchRoute.json');
 const constants = require('../config/enums.json');
 const searchRouter = new express.Router();
+const logger = require('../lib/logger.js');
 
 searchRouter.get('/case/:id', function (req, res) {
 
@@ -28,7 +29,7 @@ searchRouter.get('/case/:id', function (req, res) {
                 }
             });
         } else {
-            console.error("Bad request: " + searchKey);
+            logger.error("Bad request: " + searchKey);
             res.sendStatus(400);
         }
     } else {
@@ -60,7 +61,7 @@ searchRouter.get('/jira/:id', function (req, res) {
                 }
             });
         } else {
-            console.error("Bad request: " + searchKey);
+            logger.error("Bad request: " + searchKey);
             res.sendStatus(400);
         }
     } else {
@@ -97,9 +98,9 @@ function handleErr(err, res) {
     }
 
     try {
-        console.error(JSON.stringify(err));
+        logger.error(JSON.stringify(err));
     } catch (error) {
-        console.log(err);
+        logger.error(err);
     }
 }
 

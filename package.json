@@ -16,13 +16,16 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "bootstrap-vue": "^2.0.0-rc.11",
+    "compression": "^1.7.3",
     "express": "^4.16.3",
     "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.2.7",
     "path": "^0.12.7",
     "request": "^2.87.0",
     "vue": "^2.5.17",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "winston": "^2.0.0",
+    "winston-logzio": "^1.0.8"
   },
   "browserslist": [
     "> 1%",
@@ -30,13 +33,14 @@
     "not ie <= 8"
   ],
   "devDependencies": {
+    "@glimpse/glimpse": "^0.22.15",
     "babel-core": "^6.26.0",
-    "dotenv": "^6.0.0",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.0",
     "babel-preset-stage-3": "^6.24.1",
     "cross-env": "^5.0.5",
     "css-loader": "^0.28.7",
+    "dotenv": "^6.0.0",
     "file-loader": "^1.1.4",
     "vue-loader": "^13.0.5",
     "vue-template-compiler": "^2.5.17",

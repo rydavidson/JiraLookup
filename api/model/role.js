@@ -8,17 +8,11 @@ const roleSchema = new Schema({
 });
 
 exports.getModel = function(callback){
-    callback(mongoose.model('role', roleSchema));
+    return mongoose.model('role', roleSchema);
 }
 
 exports.getSchema = function(){
     return roleSchema;
 }
 
-exports.getScopes = function(roleObjectId){
-    return new Promise(function(resolve, reject){
-        
-    })
-}
-
-exports.roleSchema = roleSchema;
+module.exports.roleSchema = roleSchema;
