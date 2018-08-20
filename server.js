@@ -7,6 +7,7 @@ require('dotenv').config();
 const express = require("express");
 const bodyParser = require('body-parser');
 const compression = require('compression');
+const sslRedirect = require('heroku-ssl-redirect');
 const db = require('./api/lib/mongolib');
 
 // express config
@@ -19,6 +20,7 @@ const port = process.env.PORT || 3001;
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(compression({filter: shouldCompress}));
+app.use(sslRedirect());
 
 app.use(function(req, res, next){
 if(req.url === '/')
