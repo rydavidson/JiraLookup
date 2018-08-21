@@ -15273,6 +15273,10 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
             _this.loggedIn = loggedIn;
         });
 
+        __WEBPACK_IMPORTED_MODULE_0__app_js__["eventBus"].$on('switchMode', function (mode) {
+            _this.mode = mode;
+        });
+
         if (sessionStorage.getItem('jwt') !== null) this.loggedIn = true;
     }
 });
@@ -15316,68 +15320,91 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
-    name: "dosearch",
-    components: { resultitems: __WEBPACK_IMPORTED_MODULE_0__jl_result_items__["a" /* default */] },
-    data: function data() {
-        return {
-            searchKey: "",
-            showDismissibleAlert: false,
-            err: "",
-            localLogin: true,
-            showResults: true,
-            searchMode: 'Case #'
-        };
-    },
+  name: "dosearch",
+  components: { resultitems: __WEBPACK_IMPORTED_MODULE_0__jl_result_items__["a" /* default */] },
+  data: function data() {
+    return {
+      searchKey: "",
+      showDismissibleAlert: false,
+      err: "",
+      localLogin: true,
+      showResults: true,
+      searchMode: 'Case #',
+      placeholderText: 'Enter Salesforce #'
+    };
+  },
 
-    methods: {
-        onSubmit: function onSubmit(evt) {
+  methods: {
+    onSubmit: function onSubmit(evt) {
 
-            evt.preventDefault();
+      var sfReg = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]/gmi;
+      var jiraReg = /^[a-z]*-[0-9]*$/gmi;
 
-            var apiRoot = window.location.href.split("/")[0] + "/api";
-            var api;
+      evt.preventDefault();
 
-            api = apiRoot + "/search/case/";
+      var apiRoot = window.location.href.split("/")[0] + "/api";
+      var api;
 
-            if (this.searchMode === 'Jira ID') {
+      api = apiRoot + "/search/case/";
 
-                api = apiRoot + "/search/jira/";
-            }
+      if (this.searchMode === 'Jira ID') {
 
-            var xhr = __WEBPACK_IMPORTED_MODULE_1__lib_auth_js__["b" /* createCORSRequest */]("GET", api + this.searchKey);
+        api = apiRoot + "/search/jira/";
+      }
 
-            //xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.setRequestHeader("Authorization", sessionStorage.getItem("jwt"));
+      var sf = sfReg.exec(this.searchKey);
+      var j = jiraReg.exec(this.searchKey);
 
-            xhr.onreadystatechange = function () {
+      if (sf !== null) {
+        __WEBPACK_IMPORTED_MODULE_2__app_js__["eventBus"].$emit('switchMode', 'Case #');
+        api = apiRoot + "/search/case/";
+      }
 
-                if (this.readyState === XMLHttpRequest.DONE) {
-                    if (this.status === 203 || this.status === 200 || this.status === 304) {
-                        var res = JSON.parse(this.responseText);
-                        __WEBPACK_IMPORTED_MODULE_2__app_js__["eventBus"].$emit('resultReturned', res);
-                    } else if (this.status === 204) {
-                        this.showResults = false;
-                        __WEBPACK_IMPORTED_MODULE_2__app_js__["eventBus"].$emit('emptyResult', true);
-                    } else if (this.status === 400) {
-                        this.showResults = false;
-                        __WEBPACK_IMPORTED_MODULE_2__app_js__["eventBus"].$emit('invalidInput', true);
-                    } else {
-                        this.err = this.responseText;
-                        this.showDismissibleAlert = true;
-                        // console.error(this.status);
-                    }
-                }
-            };
-            xhr.send();
+      if (j !== null) {
+        __WEBPACK_IMPORTED_MODULE_2__app_js__["eventBus"].$emit('switchMode', 'Jira ID');
+        api = apiRoot + "/search/jira/";
+      }
+
+      var xhr = __WEBPACK_IMPORTED_MODULE_1__lib_auth_js__["b" /* createCORSRequest */]("GET", api + this.searchKey);
+
+      //xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      xhr.setRequestHeader("Authorization", sessionStorage.getItem("jwt"));
+
+      xhr.onreadystatechange = function () {
+
+        if (this.readyState === XMLHttpRequest.DONE) {
+          if (this.status === 203 || this.status === 200 || this.status === 304) {
+            var res = JSON.parse(this.responseText);
+            __WEBPACK_IMPORTED_MODULE_2__app_js__["eventBus"].$emit('resultReturned', res);
+          } else if (this.status === 204) {
+            this.showResults = false;
+            __WEBPACK_IMPORTED_MODULE_2__app_js__["eventBus"].$emit('emptyResult', true);
+          } else if (this.status === 400) {
+            this.showResults = false;
+            __WEBPACK_IMPORTED_MODULE_2__app_js__["eventBus"].$emit('invalidInput', true);
+          } else {
+            this.err = this.responseText;
+            this.showDismissibleAlert = true;
+            // console.error(this.status);
+          }
         }
-    },
-    created: function created() {
-        var _this = this;
-
-        __WEBPACK_IMPORTED_MODULE_2__app_js__["eventBus"].$on('switchMode', function (mode) {
-            _this.searchMode = mode;
-        });
+      };
+      xhr.send();
     }
+  },
+  created: function created() {
+    var _this = this;
+
+    __WEBPACK_IMPORTED_MODULE_2__app_js__["eventBus"].$on('switchMode', function (mode) {
+      _this.searchMode = mode;
+      if (mode === 'Case #') {
+        _this.placeholderText = 'Enter Salesforce #';
+      }
+      if (mode === 'Jira ID') {
+        _this.placeholderText = 'Enter Jira #';
+      }
+    });
+  }
 });
 
 /***/ }),
@@ -15442,6 +15469,7 @@ if (false) {(function () {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__app_js__ = __webpack_require__(28);
+//
 //
 //
 //
@@ -33834,7 +33862,7 @@ exports = module.exports = __webpack_require__(13)(true);
 
 
 // module
-exports.push([module.i, "\n.bg-info[data-v-49ee1657] {\n    background-color: #002c76 !important;\n}\n\n", "", {"version":3,"sources":["C:/Dev/JiraLookup/ui/src/components/ui/src/components/jl-navbar.vue"],"names":[],"mappings":";AAmEA;IACA,qCAAA;CACA","file":"jl-navbar.vue","sourcesContent":["<template>\r\n    <b-navbar toggleable=\"md\" type=\"dark\" variant=\"info\">\r\n\r\n        <b-navbar-toggle target=\"nav_collapse\"></b-navbar-toggle>\r\n\r\n        <b-navbar-brand href=\"#\">Jira Lookup</b-navbar-brand>\r\n        <b-collapse is-nav id=\"nav_collapse\">\r\n            <b-navbar-nav class=\"ml-auto\">\r\n                <b-navbar-brand>Search Mode: {{mode}}</b-navbar-brand>\r\n                <b-nav-item-dropdown v-if=\"caseModeEnabled && jiraModeEnabled\" id=\"searchDropdown\"\r\n                                     text=\"Switch Search Mode\" right>\r\n                    <b-dropdown-item v-if=\"caseModeEnabled\" href=\"#\" @click=\"switchMode('case')\">Salesforce Case\r\n                    </b-dropdown-item>\r\n                    <b-dropdown-item v-if=\"jiraModeEnabled\" href=\"#\" @click=\"switchMode('jira')\">Jira Issue\r\n                    </b-dropdown-item>\r\n                </b-nav-item-dropdown>\r\n                <b-nav-item v-if=\"loggedIn\" @click=\"logOut\">Logout</b-nav-item>\r\n            </b-navbar-nav>\r\n        </b-collapse>\r\n    </b-navbar>\r\n\r\n</template>\r\n\r\n<script>\r\n\r\n    import {eventBus} from '../app.js';\r\n\r\n    export default {\r\n        name: \"navbar\",\r\n        data() {\r\n            return {\r\n                mode: \"Case #\",\r\n                loggedIn: false,\r\n                caseModeEnabled: true,\r\n                jiraModeEnabled: true\r\n            }\r\n        },\r\n        methods: {\r\n            logOut() {\r\n                this.$parent.$router.replace('/login');\r\n                sessionStorage.removeItem('jwt');\r\n                eventBus.$emit('loggedIn', false);\r\n            },\r\n            switchMode(selectedMode) {\r\n                console.log(selectedMode);\r\n                if (selectedMode === 'jira') {\r\n                    this.mode = 'Jira ID';\r\n                } else {\r\n                    this.mode = 'Case #';\r\n                }\r\n                eventBus.$emit('switchMode', this.mode);\r\n            }\r\n        },\r\n        created() {\r\n            eventBus.$on('loggedIn', (loggedIn) => {\r\n                this.loggedIn = loggedIn;\r\n            });\r\n\r\n            if (sessionStorage.getItem('jwt') !== null)\r\n                this.loggedIn = true;\r\n        }\r\n\r\n    }\r\n</script>\r\n\r\n<style scoped>\r\n\r\n    .bg-info {\r\n        background-color: #002c76 !important;\r\n    }\r\n\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.bg-info[data-v-49ee1657] {\n    background-color: #002c76 !important;\n}\n\n", "", {"version":3,"sources":["C:/Dev/JiraLookup/ui/src/components/ui/src/components/jl-navbar.vue"],"names":[],"mappings":";AAuEA;IACA,qCAAA;CACA","file":"jl-navbar.vue","sourcesContent":["<template>\n    <b-navbar toggleable=\"md\" type=\"dark\" variant=\"info\">\n\n        <b-navbar-toggle target=\"nav_collapse\"></b-navbar-toggle>\n\n        <b-navbar-brand href=\"#\">Jira Lookup</b-navbar-brand>\n        <b-collapse is-nav id=\"nav_collapse\">\n            <b-navbar-nav class=\"ml-auto\">\n                <b-navbar-brand>Search Mode: {{mode}}</b-navbar-brand>\n                <b-nav-item-dropdown v-if=\"caseModeEnabled && jiraModeEnabled\" id=\"searchDropdown\"\n                                     text=\"Switch Search Mode\" right>\n                    <b-dropdown-item v-if=\"caseModeEnabled\" href=\"#\" @click=\"switchMode('case')\">Salesforce Case\n                    </b-dropdown-item>\n                    <b-dropdown-item v-if=\"jiraModeEnabled\" href=\"#\" @click=\"switchMode('jira')\">Jira Issue\n                    </b-dropdown-item>\n                </b-nav-item-dropdown>\n                <b-nav-item v-if=\"loggedIn\" @click=\"logOut\">Logout</b-nav-item>\n            </b-navbar-nav>\n        </b-collapse>\n    </b-navbar>\n\n</template>\n\n<script>\n\n    import {eventBus} from '../app.js';\n\n    export default {\n        name: \"navbar\",\n        data() {\n            return {\n                mode: \"Case #\",\n                loggedIn: false,\n                caseModeEnabled: true,\n                jiraModeEnabled: true\n            }\n        },\n        methods: {\n            logOut() {\n                this.$parent.$router.replace('/login');\n                sessionStorage.removeItem('jwt');\n                eventBus.$emit('loggedIn', false);\n            },\n            switchMode(selectedMode) {\n                console.log(selectedMode);\n                if (selectedMode === 'jira') {\n                    this.mode = 'Jira ID';\n                } else {\n                    this.mode = 'Case #';\n                }\n                eventBus.$emit('switchMode', this.mode);\n            }\n        },\n        created() {\n            eventBus.$on('loggedIn', (loggedIn) => {\n                this.loggedIn = loggedIn;\n            });\n\n            eventBus.$on('switchMode', (mode) => {\n              this.mode = mode;\n            });\n\n            if (sessionStorage.getItem('jwt') !== null)\n                this.loggedIn = true;\n        }\n\n    }\n</script>\n\n<style scoped>\n\n    .bg-info {\n        background-color: #002c76 !important;\n    }\n\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -34030,7 +34058,7 @@ exports = module.exports = __webpack_require__(13)(true);
 
 
 // module
-exports.push([module.i, "\n#search[data-v-f271e69a] {\n    width: 20%;\n    min-width: 250px;\n    margin: auto;\n}\n\n", "", {"version":3,"sources":["C:/Dev/JiraLookup/ui/src/components/ui/src/components/jl-do-search.vue"],"names":[],"mappings":";AAoGA;IACA,WAAA;IACA,iBAAA;IACA,aAAA;CACA","file":"jl-do-search.vue","sourcesContent":["<template>\r\n    <div>\r\n        <b-form @submit=\"onSubmit\">\r\n            <b-form-group id=\"search\">\r\n                <b-form-input size=\"sm\" class=\"mr-sm-2\" type=\"text\" placeholder=\"Enter search term\"\r\n                              v-model=\"searchKey\"\r\n                              required></b-form-input>\r\n                <br/>\r\n                <b-button size=\"lg\" style=\"background-color: #002c76\" type=\"submit\">Search</b-button>\r\n            </b-form-group>\r\n        </b-form>\r\n        <b-alert id=\"small-alert\"\r\n                 variant=\"danger\"\r\n                 dismissible\r\n                 :show=\"showDismissibleAlert\"\r\n                 @dismissed=\"showDismissibleAlert=false\">\r\n            {{ err }}\r\n        </b-alert>\r\n        <br/>\r\n        <div id=\"results\">\r\n            <resultitems v-if=\"showResults\"></resultitems>\r\n        </div>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n    import resultitems from \"./jl-result-items\";\r\n    import * as Auth from '../lib/auth.js'\r\n    import {eventBus} from '../app.js'\r\n\r\n    export default {\r\n        name: \"dosearch\",\r\n        components: {resultitems},\r\n        data() {\r\n            return {\r\n                searchKey: \"\",\r\n                showDismissibleAlert: false,\r\n                err: \"\",\r\n                localLogin: true,\r\n                showResults: true,\r\n                searchMode: 'Case #'\r\n            }\r\n        },\r\n        methods: {\r\n            onSubmit(evt) {\r\n\r\n                evt.preventDefault();\r\n\r\n                var apiRoot = window.location.href.split(\"/\")[0] + \"/api\";\r\n                var api;\r\n\r\n                api = apiRoot + \"/search/case/\";\r\n\r\n                if(this.searchMode === 'Jira ID'){\r\n\r\n                    api = apiRoot + \"/search/jira/\";\r\n                }\r\n\r\n                var xhr = Auth.createCORSRequest(\"GET\", api + this.searchKey);\r\n\r\n                //xhr.setRequestHeader(\"Content-Type\", \"application/x-www-form-urlencoded\");\r\n                xhr.setRequestHeader(\"Authorization\", sessionStorage.getItem(\"jwt\"));\r\n\r\n                xhr.onreadystatechange = function () {\r\n\r\n                    if (this.readyState === XMLHttpRequest.DONE) {\r\n                        if (this.status === 203 || this.status === 200 || this.status === 304) {\r\n                            var res = JSON.parse(this.responseText);\r\n                            eventBus.$emit('resultReturned', res);\r\n                        }\r\n                        else if (this.status === 204) {\r\n                            this.showResults = false;\r\n                            eventBus.$emit('emptyResult', true);\r\n                        }\r\n                        else if (this.status === 400) {\r\n                            this.showResults = false;\r\n                            eventBus.$emit('invalidInput', true);\r\n                        }\r\n                        else {\r\n                            this.err = this.responseText;\r\n                            this.showDismissibleAlert = true;\r\n                            // console.error(this.status);\r\n                        }\r\n                    }\r\n                }\r\n                xhr.send();\r\n            }\r\n        },\r\n        created() {\r\n            eventBus.$on('switchMode', (mode) => {\r\n                this.searchMode=mode;\r\n            });\r\n        }\r\n    }\r\n\r\n\r\n</script>\r\n\r\n<style scoped>\r\n\r\n    #search {\r\n        width: 20%;\r\n        min-width: 250px;\r\n        margin: auto;\r\n    }\r\n\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n#search[data-v-f271e69a] {\n  width: 20%;\n  min-width: 250px;\n  margin: auto;\n}\n\n", "", {"version":3,"sources":["C:/Dev/JiraLookup/ui/src/components/ui/src/components/jl-do-search.vue"],"names":[],"mappings":";AA4HA;EACA,WAAA;EACA,iBAAA;EACA,aAAA;CACA","file":"jl-do-search.vue","sourcesContent":["<template>\n  <div>\n    <b-form @submit=\"onSubmit\">\n      <b-form-group id=\"search\">\n        <b-form-input size=\"sm\" class=\"mr-sm-2\" type=\"text\" :placeholder=\"placeholderText\"\n                      v-model=\"searchKey\"\n                      required></b-form-input>\n        <br/>\n        <b-button size=\"lg\" style=\"background-color: #002c76\" type=\"submit\">Search</b-button>\n      </b-form-group>\n    </b-form>\n    <b-alert id=\"small-alert\"\n             variant=\"danger\"\n             dismissible\n             :show=\"showDismissibleAlert\"\n             @dismissed=\"showDismissibleAlert=false\">\n      {{ err }}\n    </b-alert>\n    <br/>\n    <div id=\"results\">\n      <resultitems v-if=\"showResults\"></resultitems>\n    </div>\n  </div>\n</template>\n\n<script>\n  import resultitems from \"./jl-result-items\";\n  import * as Auth from '../lib/auth.js'\n  import {eventBus} from '../app.js'\n\n  export default {\n    name: \"dosearch\",\n    components: {resultitems},\n    data() {\n      return {\n        searchKey: \"\",\n        showDismissibleAlert: false,\n        err: \"\",\n        localLogin: true,\n        showResults: true,\n        searchMode: 'Case #',\n        placeholderText: 'Enter Salesforce #'\n      }\n    },\n    methods: {\n      onSubmit(evt) {\n\n        var sfReg = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]/gmi;\n        var jiraReg = /^[a-z]*-[0-9]*$/gmi;\n\n\n        evt.preventDefault();\n\n        var apiRoot = window.location.href.split(\"/\")[0] + \"/api\";\n        var api;\n\n        api = apiRoot + \"/search/case/\";\n\n        if (this.searchMode === 'Jira ID') {\n\n          api = apiRoot + \"/search/jira/\";\n        }\n\n        var sf = sfReg.exec(this.searchKey);\n        var j = jiraReg.exec(this.searchKey);\n\n        if (sf !== null) {\n          eventBus.$emit('switchMode', 'Case #');\n          api = apiRoot + \"/search/case/\";\n        }\n\n        if (j !== null) {\n          eventBus.$emit('switchMode', 'Jira ID');\n          api = apiRoot + \"/search/jira/\";\n        }\n\n        var xhr = Auth.createCORSRequest(\"GET\", api + this.searchKey);\n\n        //xhr.setRequestHeader(\"Content-Type\", \"application/x-www-form-urlencoded\");\n        xhr.setRequestHeader(\"Authorization\", sessionStorage.getItem(\"jwt\"));\n\n        xhr.onreadystatechange = function () {\n\n          if (this.readyState === XMLHttpRequest.DONE) {\n            if (this.status === 203 || this.status === 200 || this.status === 304) {\n              var res = JSON.parse(this.responseText);\n              eventBus.$emit('resultReturned', res);\n            }\n            else if (this.status === 204) {\n              this.showResults = false;\n              eventBus.$emit('emptyResult', true);\n            }\n            else if (this.status === 400) {\n              this.showResults = false;\n              eventBus.$emit('invalidInput', true);\n            }\n            else {\n              this.err = this.responseText;\n              this.showDismissibleAlert = true;\n              // console.error(this.status);\n            }\n          }\n        }\n        xhr.send();\n      }\n    },\n    created() {\n      eventBus.$on('switchMode', (mode) => {\n        this.searchMode = mode;\n        if (mode === 'Case #') {\n          this.placeholderText = 'Enter Salesforce #';\n        }\n        if (mode === 'Jira ID') {\n          this.placeholderText = 'Enter Jira #';\n        }\n      });\n    }\n  }\n\n\n</script>\n\n<style scoped>\n\n  #search {\n    width: 20%;\n    min-width: 250px;\n    margin: auto;\n  }\n\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -34070,7 +34098,7 @@ exports = module.exports = __webpack_require__(13)(true);
 
 
 // module
-exports.push([module.i, "\n.card[data-v-8c6895d2] {\n    width: 20%;\n    min-width: 25rem;\n    border: 1px solid #3aadef;\n    border-radius: 4px;\n    overflow: hidden;\n    display: inline-block;\n    flex-direction: column;\n    margin: auto;\n    max-height: 80%;\n    text-overflow: ellipsis;\n}\n.card-header[data-v-8c6895d2] {\n    color: #1514d3;\n    text-align: center;\n    font-size: 12px;\n    font-weight: 600;\n    border-bottom: 1px solid #3aadef;\n    background-color: #ddf3ff;\n    padding: 5px 10px;\n}\n.card-main[data-v-8c6895d2] {\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    align-items: center;\n    padding: 15px 0 0 0;\n    max-height: 60vh;\n}\n.material-icons[data-v-8c6895d2] {\n    font-size: 36px;\n    color: #1514d3;\n    margin-bottom: 5px;\n}\n.main-description[data-v-8c6895d2] {\n    color: #1514d3;\n    font-size: 12px;\n    text-align: center;\n    min-width: 0;\n    min-height: 0;\n    max-width: 100%;\n    max-height: 100%;\n}\n#result-description[data-v-8c6895d2] {\n    overflow: auto;\n    -ms-overflow-style: auto;\n    height: 100%;\n    width: auto;\n}\n#small-alert[data-v-8c6895d2] {\n    width: 20%;\n    min-width: 100px;\n    margin: auto;\n}\n#result-description[data-v-8c6895d2] {\n    max-height: 45vh;\n}\np[data-v-8c6895d2] {\n    margin-bottom: 0rem;\n}\nnav[data-v-8c6895d2] {\n    height: auto;\n}\na[data-v-8c6895d2]:link {\n    color: #1514d3 !important;\n}\na[data-v-8c6895d2]:visited {\n    color: #42b983 !important;\n}\n\n", "", {"version":3,"sources":["C:/Dev/JiraLookup/ui/src/components/ui/src/components/jl-result-items.vue"],"names":[],"mappings":";AAiGA;IACA,WAAA;IACA,iBAAA;IACA,0BAAA;IACA,mBAAA;IACA,iBAAA;IACA,sBAAA;IACA,uBAAA;IACA,aAAA;IACA,gBAAA;IACA,wBAAA;CACA;AAEA;IACA,eAAA;IACA,mBAAA;IACA,gBAAA;IACA,iBAAA;IACA,iCAAA;IACA,0BAAA;IACA,kBAAA;CACA;AAEA;IACA,cAAA;IACA,uBAAA;IACA,wBAAA;IACA,oBAAA;IACA,oBAAA;IACA,iBAAA;CACA;AAEA;IACA,gBAAA;IACA,eAAA;IACA,mBAAA;CACA;AAEA;IACA,eAAA;IACA,gBAAA;IACA,mBAAA;IACA,aAAA;IACA,cAAA;IACA,gBAAA;IACA,iBAAA;CACA;AAEA;IACA,eAAA;IACA,yBAAA;IACA,aAAA;IACA,YAAA;CACA;AAEA;IACA,WAAA;IACA,iBAAA;IACA,aAAA;CACA;AAEA;IACA,iBAAA;CACA;AAEA;IACA,oBAAA;CACA;AAEA;IACA,aAAA;CACA;AAEA;IACA,0BAAA;CACA;AAEA;IACA,0BAAA;CACA","file":"jl-result-items.vue","sourcesContent":["<template>\r\n    <div>\r\n        <div class=\"card\" v-if=\"showSingleResult\" v-for=\"result in results\" :key=\"result.key\">\r\n            <div class=\"card-header\">\r\n                <p><a :href=\"result.jirauri\" target=\"_blank\">Jira Item: {{result.key}} <span\r\n                        class=\"fas fa-external-link-alt\"></span></a></p>\r\n                <p v-if=\"result.sfuri\"><a :href=\"result.sfuri\" target=\"_blank\">Case #: {{result.sfid}} <span\r\n                        class=\"fas fa-external-link-alt\"></span></a></p>\r\n            </div>\r\n            <div class=\"card-main\">\r\n                <p><strong>{{result.summary}}</strong></p>\r\n                <i class=\"material-icons\">{{result.status.icon}}</i>\r\n                <div class=\"main-description\">\r\n                    <p id=\"public-status\" v-b-tooltip.hover :title=\"result.status.description\"><strong>Status: </strong>{{result.status.publicStatus}}\r\n                    </p>\r\n                    <p><strong>Last Updated: </strong>{{result.updated}}</p>\r\n                    <p><strong>Targeted Release: </strong>{{result.fixtarget}}</p>\r\n\r\n                    <p><strong>Description: </strong></p>\r\n                    <p id=\"result-description\" v-html=\"result.title\"></p>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <b-alert id=\"small-alert\"\r\n                 variant=\"danger\"\r\n                 dismissible\r\n                 :show=\"showDismissibleAlert\"\r\n                 @dismissed=\"showDismissibleAlert=false\">\r\n            {{ err }}\r\n        </b-alert>\r\n    </div>\r\n</template>\r\n\r\n<script>\r\n    import {eventBus} from '../app.js'\r\n\r\n    export default {\r\n        name: \"resultitems\",\r\n        data() {\r\n            return {\r\n                title: \"\",\r\n                resultText: \"No results\",\r\n                showSingleResult: false,\r\n                showDismissibleAlert: false,\r\n                err: \"\",\r\n                results: []\r\n            }\r\n        }\r\n\r\n        ,\r\n        methods: {\r\n            escapeHtml(unsafe) {\r\n                return unsafe\r\n                    .replace(/&/g, \"&amp;\")\r\n                    .replace(/</g, \"&lt;\")\r\n                    .replace(/>/g, \"&gt;\")\r\n                    .replace(/\"/g, \"&quot;\")\r\n                    .replace(/'/g, \"&#039;\");\r\n            }\r\n        }\r\n        ,\r\n        created() {\r\n            eventBus.$on('resultReturned', (result) => {\r\n                // console.log(result);\r\n                this.showDismissibleAlert = false;\r\n                this.err = \"\";\r\n                this.results = [];\r\n                var self = this;\r\n                result.results.forEach(function (e) {\r\n                    var regger = /\\r?\\n|\\r/g;\r\n                    e.title = self.escapeHtml(e.title);\r\n                    // console.log(regger.test(e.title));\r\n                    e.title = e.title.replace(regger, \"<br/>\");\r\n                    // console.log(e.title);\r\n                    //e.title = \"<div>\" + e.title + \"</div>\";\r\n                    self.results.push(e);\r\n                });\r\n                this.showSingleResult = true;\r\n            });\r\n            eventBus.$on('emptyResult', (e) => {\r\n                this.showSingleResult = false;\r\n                this.err = \"No results returned\";\r\n                this.showDismissibleAlert = true;\r\n            });\r\n            eventBus.$on('invalidInput', (e) => {\r\n                console.log(\"Invalid input fired\");\r\n                this.showSingleResult = false;\r\n                this.err = \"Invalid input\";\r\n                this.showDismissibleAlert = true;\r\n            });\r\n        }\r\n\r\n    }\r\n</script>\r\n\r\n<style scoped>\r\n\r\n    .card {\r\n        width: 20%;\r\n        min-width: 25rem;\r\n        border: 1px solid #3aadef;\r\n        border-radius: 4px;\r\n        overflow: hidden;\r\n        display: inline-block;\r\n        flex-direction: column;\r\n        margin: auto;\r\n        max-height: 80%;\r\n        text-overflow: ellipsis;\r\n    }\r\n\r\n    .card-header {\r\n        color: #1514d3;\r\n        text-align: center;\r\n        font-size: 12px;\r\n        font-weight: 600;\r\n        border-bottom: 1px solid #3aadef;\r\n        background-color: #ddf3ff;\r\n        padding: 5px 10px;\r\n    }\r\n\r\n    .card-main {\r\n        display: flex;\r\n        flex-direction: column;\r\n        justify-content: center;\r\n        align-items: center;\r\n        padding: 15px 0 0 0;\r\n        max-height: 60vh;\r\n    }\r\n\r\n    .material-icons {\r\n        font-size: 36px;\r\n        color: #1514d3;\r\n        margin-bottom: 5px;\r\n    }\r\n\r\n    .main-description {\r\n        color: #1514d3;\r\n        font-size: 12px;\r\n        text-align: center;\r\n        min-width: 0;\r\n        min-height: 0;\r\n        max-width: 100%;\r\n        max-height: 100%;\r\n    }\r\n\r\n    #result-description {\r\n        overflow: auto;\r\n        -ms-overflow-style: auto;\r\n        height: 100%;\r\n        width: auto;\r\n    }\r\n\r\n    #small-alert {\r\n        width: 20%;\r\n        min-width: 100px;\r\n        margin: auto;\r\n    }\r\n\r\n    #result-description {\r\n        max-height: 45vh;\r\n    }\r\n\r\n    p {\r\n        margin-bottom: 0rem;\r\n    }\r\n\r\n    nav {\r\n        height: auto;\r\n    }\r\n\r\n    a:link {\r\n        color: #1514d3 !important;\r\n    }\r\n\r\n    a:visited {\r\n        color: #42b983 !important;\r\n    }\r\n\r\n</style>\r\n"],"sourceRoot":""}]);
+exports.push([module.i, "\n.card[data-v-8c6895d2] {\n    width: 20%;\n    min-width: 25rem;\n    border: 1px solid #3aadef;\n    border-radius: 4px;\n    overflow: hidden;\n    display: inline-block;\n    flex-direction: column;\n    margin: auto;\n    max-height: 80%;\n    text-overflow: ellipsis;\n}\n.card-header[data-v-8c6895d2] {\n    color: #1514d3;\n    text-align: center;\n    font-size: 12px;\n    font-weight: 600;\n    border-bottom: 1px solid #3aadef;\n    background-color: #ddf3ff;\n    padding: 5px 10px;\n}\n.card-main[data-v-8c6895d2] {\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    align-items: center;\n    padding: 15px 0 0 0;\n    max-height: 60vh;\n}\n.material-icons[data-v-8c6895d2] {\n    font-size: 36px;\n    color: #1514d3;\n    margin-bottom: 5px;\n}\n.main-description[data-v-8c6895d2] {\n    color: #1514d3;\n    font-size: 12px;\n    text-align: center;\n    min-width: 0;\n    min-height: 0;\n    max-width: 100%;\n    max-height: 100%;\n}\n#result-description[data-v-8c6895d2] {\n    overflow: auto;\n    -ms-overflow-style: auto;\n    height: 100%;\n    width: auto;\n}\n#small-alert[data-v-8c6895d2] {\n    width: 20%;\n    min-width: 100px;\n    margin: auto;\n}\n#result-description[data-v-8c6895d2] {\n    max-height: 45vh;\n}\np[data-v-8c6895d2] {\n    margin-bottom: 0rem;\n}\nnav[data-v-8c6895d2] {\n    height: auto;\n}\na[data-v-8c6895d2]:link {\n    color: #1514d3 !important;\n}\na[data-v-8c6895d2]:visited {\n    color: #42b983 !important;\n}\n\n", "", {"version":3,"sources":["C:/Dev/JiraLookup/ui/src/components/ui/src/components/jl-result-items.vue"],"names":[],"mappings":";AAkGA;IACA,WAAA;IACA,iBAAA;IACA,0BAAA;IACA,mBAAA;IACA,iBAAA;IACA,sBAAA;IACA,uBAAA;IACA,aAAA;IACA,gBAAA;IACA,wBAAA;CACA;AAEA;IACA,eAAA;IACA,mBAAA;IACA,gBAAA;IACA,iBAAA;IACA,iCAAA;IACA,0BAAA;IACA,kBAAA;CACA;AAEA;IACA,cAAA;IACA,uBAAA;IACA,wBAAA;IACA,oBAAA;IACA,oBAAA;IACA,iBAAA;CACA;AAEA;IACA,gBAAA;IACA,eAAA;IACA,mBAAA;CACA;AAEA;IACA,eAAA;IACA,gBAAA;IACA,mBAAA;IACA,aAAA;IACA,cAAA;IACA,gBAAA;IACA,iBAAA;CACA;AAEA;IACA,eAAA;IACA,yBAAA;IACA,aAAA;IACA,YAAA;CACA;AAEA;IACA,WAAA;IACA,iBAAA;IACA,aAAA;CACA;AAEA;IACA,iBAAA;CACA;AAEA;IACA,oBAAA;CACA;AAEA;IACA,aAAA;CACA;AAEA;IACA,0BAAA;CACA;AAEA;IACA,0BAAA;CACA","file":"jl-result-items.vue","sourcesContent":["<template>\n    <div>\n        <div class=\"card\" v-if=\"showSingleResult\" v-for=\"result in results\" :key=\"result.key\">\n            <div class=\"card-header\">\n                <p><a :href=\"result.jirauri\" target=\"_blank\">Jira Item: {{result.key}} <span\n                        class=\"fas fa-external-link-alt\"></span></a></p>\n                <p v-if=\"result.sfuri\"><a :href=\"result.sfuri\" target=\"_blank\">Case #: {{result.sfid}} <span\n                        class=\"fas fa-external-link-alt\"></span></a></p>\n            </div>\n            <div class=\"card-main\">\n                <p><strong>{{result.summary}}</strong></p>\n                <i class=\"material-icons\">{{result.status.icon}}</i>\n                <div class=\"main-description\">\n                    <p id=\"public-status\" v-b-tooltip.hover :title=\"result.status.description\"><strong>Status: </strong>{{result.status.publicStatus}}\n                    </p>\n                    <p v-if=\"result.assignee\"><strong>Assigned To: </strong>{{result.assignee}}</p>\n                    <p><strong>Last Updated: </strong>{{result.updated}}</p>\n                    <p><strong>Targeted Release: </strong>{{result.fixtarget}}</p>\n\n                    <p><strong>Description: </strong></p>\n                    <p id=\"result-description\" v-html=\"result.title\"></p>\n                </div>\n            </div>\n        </div>\n        <b-alert id=\"small-alert\"\n                 variant=\"danger\"\n                 dismissible\n                 :show=\"showDismissibleAlert\"\n                 @dismissed=\"showDismissibleAlert=false\">\n            {{ err }}\n        </b-alert>\n    </div>\n</template>\n\n<script>\n    import {eventBus} from '../app.js'\n\n    export default {\n        name: \"resultitems\",\n        data() {\n            return {\n                title: \"\",\n                resultText: \"No results\",\n                showSingleResult: false,\n                showDismissibleAlert: false,\n                err: \"\",\n                results: []\n            }\n        }\n\n        ,\n        methods: {\n            escapeHtml(unsafe) {\n                return unsafe\n                    .replace(/&/g, \"&amp;\")\n                    .replace(/</g, \"&lt;\")\n                    .replace(/>/g, \"&gt;\")\n                    .replace(/\"/g, \"&quot;\")\n                    .replace(/'/g, \"&#039;\");\n            }\n        }\n        ,\n        created() {\n            eventBus.$on('resultReturned', (result) => {\n                // console.log(result);\n                this.showDismissibleAlert = false;\n                this.err = \"\";\n                this.results = [];\n                var self = this;\n                result.results.forEach(function (e) {\n                    var regger = /\\r?\\n|\\r/g;\n                    e.title = self.escapeHtml(e.title);\n                    // console.log(regger.test(e.title));\n                    e.title = e.title.replace(regger, \"<br/>\");\n                    // console.log(e.title);\n                    //e.title = \"<div>\" + e.title + \"</div>\";\n                    self.results.push(e);\n                });\n                this.showSingleResult = true;\n            });\n            eventBus.$on('emptyResult', (e) => {\n                this.showSingleResult = false;\n                this.err = \"No results returned\";\n                this.showDismissibleAlert = true;\n            });\n            eventBus.$on('invalidInput', (e) => {\n                console.log(\"Invalid input fired\");\n                this.showSingleResult = false;\n                this.err = \"Invalid input\";\n                this.showDismissibleAlert = true;\n            });\n        }\n\n    }\n</script>\n\n<style scoped>\n\n    .card {\n        width: 20%;\n        min-width: 25rem;\n        border: 1px solid #3aadef;\n        border-radius: 4px;\n        overflow: hidden;\n        display: inline-block;\n        flex-direction: column;\n        margin: auto;\n        max-height: 80%;\n        text-overflow: ellipsis;\n    }\n\n    .card-header {\n        color: #1514d3;\n        text-align: center;\n        font-size: 12px;\n        font-weight: 600;\n        border-bottom: 1px solid #3aadef;\n        background-color: #ddf3ff;\n        padding: 5px 10px;\n    }\n\n    .card-main {\n        display: flex;\n        flex-direction: column;\n        justify-content: center;\n        align-items: center;\n        padding: 15px 0 0 0;\n        max-height: 60vh;\n    }\n\n    .material-icons {\n        font-size: 36px;\n        color: #1514d3;\n        margin-bottom: 5px;\n    }\n\n    .main-description {\n        color: #1514d3;\n        font-size: 12px;\n        text-align: center;\n        min-width: 0;\n        min-height: 0;\n        max-width: 100%;\n        max-height: 100%;\n    }\n\n    #result-description {\n        overflow: auto;\n        -ms-overflow-style: auto;\n        height: 100%;\n        width: auto;\n    }\n\n    #small-alert {\n        width: 20%;\n        min-width: 100px;\n        margin: auto;\n    }\n\n    #result-description {\n        max-height: 45vh;\n    }\n\n    p {\n        margin-bottom: 0rem;\n    }\n\n    nav {\n        height: auto;\n    }\n\n    a:link {\n        color: #1514d3 !important;\n    }\n\n    a:visited {\n        color: #42b983 !important;\n    }\n\n</style>\n"],"sourceRoot":""}]);
 
 // exports
 
@@ -34149,6 +34177,13 @@ var render = function() {
                       )
                     ]
                   ),
+                  _vm._v(" "),
+                  result.assignee
+                    ? _c("p", [
+                        _c("strong", [_vm._v("Assigned To: ")]),
+                        _vm._v(_vm._s(result.assignee))
+                      ])
+                    : _vm._e(),
                   _vm._v(" "),
                   _c("p", [
                     _c("strong", [_vm._v("Last Updated: ")]),
@@ -34236,7 +34271,7 @@ var render = function() {
                 attrs: {
                   size: "sm",
                   type: "text",
-                  placeholder: "Enter search term",
+                  placeholder: _vm.placeholderText,
                   required: ""
                 },
                 model: {
@@ -34280,7 +34315,7 @@ var render = function() {
             }
           }
         },
-        [_vm._v("\n        " + _vm._s(_vm.err) + "\n    ")]
+        [_vm._v("\n    " + _vm._s(_vm.err) + "\n  ")]
       ),
       _vm._v(" "),
       _c("br"),
@@ -37396,7 +37431,7 @@ module.exports.makeKey = makeKey
 /* 210 */
 /***/ (function(module, exports) {
 
-module.exports = {"_args":[["elliptic@6.4.0","C:\\Dev\\JiraLookup"]],"_development":true,"_from":"elliptic@6.4.0","_id":"elliptic@6.4.0","_inBundle":false,"_integrity":"sha1-ysmvh2LIWDYYcAPI3+GT5eLq5d8=","_location":"/elliptic","_phantomChildren":{},"_requested":{"type":"version","registry":true,"raw":"elliptic@6.4.0","name":"elliptic","escapedName":"elliptic","rawSpec":"6.4.0","saveSpec":null,"fetchSpec":"6.4.0"},"_requiredBy":["/browserify-sign","/create-ecdh"],"_resolved":"https://registry.npmjs.org/elliptic/-/elliptic-6.4.0.tgz","_spec":"6.4.0","_where":"C:\\Dev\\JiraLookup","author":{"name":"Fedor Indutny","email":"fedor@indutny.com"},"bugs":{"url":"https://github.com/indutny/elliptic/issues"},"dependencies":{"bn.js":"^4.4.0","brorand":"^1.0.1","hash.js":"^1.0.0","hmac-drbg":"^1.0.0","inherits":"^2.0.1","minimalistic-assert":"^1.0.0","minimalistic-crypto-utils":"^1.0.0"},"description":"EC cryptography","devDependencies":{"brfs":"^1.4.3","coveralls":"^2.11.3","grunt":"^0.4.5","grunt-browserify":"^5.0.0","grunt-cli":"^1.2.0","grunt-contrib-connect":"^1.0.0","grunt-contrib-copy":"^1.0.0","grunt-contrib-uglify":"^1.0.1","grunt-mocha-istanbul":"^3.0.1","grunt-saucelabs":"^8.6.2","istanbul":"^0.4.2","jscs":"^2.9.0","jshint":"^2.6.0","mocha":"^2.1.0"},"files":["lib"],"homepage":"https://github.com/indutny/elliptic","keywords":["EC","Elliptic","curve","Cryptography"],"license":"MIT","main":"lib/elliptic.js","name":"elliptic","repository":{"type":"git","url":"git+ssh://git@github.com/indutny/elliptic.git"},"scripts":{"jscs":"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js","jshint":"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js","lint":"npm run jscs && npm run jshint","test":"npm run lint && npm run unit","unit":"istanbul test _mocha --reporter=spec test/index.js","version":"grunt dist && git add dist/"},"version":"6.4.0"}
+module.exports = {"_from":"elliptic@^6.0.0","_id":"elliptic@6.4.0","_inBundle":false,"_integrity":"sha1-ysmvh2LIWDYYcAPI3+GT5eLq5d8=","_location":"/elliptic","_phantomChildren":{},"_requested":{"type":"range","registry":true,"raw":"elliptic@^6.0.0","name":"elliptic","escapedName":"elliptic","rawSpec":"^6.0.0","saveSpec":null,"fetchSpec":"^6.0.0"},"_requiredBy":["/browserify-sign","/create-ecdh"],"_resolved":"https://registry.npmjs.org/elliptic/-/elliptic-6.4.0.tgz","_shasum":"cac9af8762c85836187003c8dfe193e5e2eae5df","_spec":"elliptic@^6.0.0","_where":"C:\\Dev\\JiraLookup\\node_modules\\browserify-sign","author":{"name":"Fedor Indutny","email":"fedor@indutny.com"},"bugs":{"url":"https://github.com/indutny/elliptic/issues"},"bundleDependencies":false,"dependencies":{"bn.js":"^4.4.0","brorand":"^1.0.1","hash.js":"^1.0.0","hmac-drbg":"^1.0.0","inherits":"^2.0.1","minimalistic-assert":"^1.0.0","minimalistic-crypto-utils":"^1.0.0"},"deprecated":false,"description":"EC cryptography","devDependencies":{"brfs":"^1.4.3","coveralls":"^2.11.3","grunt":"^0.4.5","grunt-browserify":"^5.0.0","grunt-cli":"^1.2.0","grunt-contrib-connect":"^1.0.0","grunt-contrib-copy":"^1.0.0","grunt-contrib-uglify":"^1.0.1","grunt-mocha-istanbul":"^3.0.1","grunt-saucelabs":"^8.6.2","istanbul":"^0.4.2","jscs":"^2.9.0","jshint":"^2.6.0","mocha":"^2.1.0"},"files":["lib"],"homepage":"https://github.com/indutny/elliptic","keywords":["EC","Elliptic","curve","Cryptography"],"license":"MIT","main":"lib/elliptic.js","name":"elliptic","repository":{"type":"git","url":"git+ssh://git@github.com/indutny/elliptic.git"},"scripts":{"jscs":"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js","jshint":"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js","lint":"npm run jscs && npm run jshint","test":"npm run lint && npm run unit","unit":"istanbul test _mocha --reporter=spec test/index.js","version":"grunt dist && git add dist/"},"version":"6.4.0"}
 
 /***/ }),
 /* 211 */
