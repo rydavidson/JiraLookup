@@ -81,6 +81,8 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
                     jira_item.updated = new Date(issue.fields.updated).toDateString();
                     if(issue.fields.assignee !== null){
                       jira_item.assignee = issue.fields.assignee.displayName;
+                    } else {
+                      jira_item.assignee = "Unassigned";
                     }
                     if (issue.fields.fixVersions.length > 0) {
                         jira_item.fixtarget = issue.fields.fixVersions[0].name;
@@ -159,7 +161,8 @@ function stripENGSUPP(issueArray, callback){
     callback(issueArray);
   } else {
     let tempArr = {results: []};
-    tempArr.results = issueArray.results.filter(issue => issue.stat !== mappings["ENGSUPP"]);
+    tempArr.results = issueArray.results.filter(issue => issue.status !== mappings["ENGSUPP"]);
+    console.log(JSON.stringify(tempArr));
     callback(tempArr);
   }
 }
