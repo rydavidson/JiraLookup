@@ -162,7 +162,10 @@ function stripENGSUPP(issueArray, callback){
   } else {
     let tempArr = {results: []};
     tempArr.results = issueArray.results.filter(issue => issue.status !== mappings["ENGSUPP"]);
-    console.log(JSON.stringify(tempArr));
-    callback(tempArr);
+    if(tempArr.results.length > 0){
+      callback(tempArr);
+    } else {
+      callback(issueArray);
+    }
   }
 }
