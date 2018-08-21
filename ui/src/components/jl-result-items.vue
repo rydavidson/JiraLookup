@@ -13,6 +13,7 @@
                 <div class="main-description">
                     <p id="public-status" v-b-tooltip.hover :title="result.status.description"><strong>Status: </strong>{{result.status.publicStatus}}
                     </p>
+                    <p v-if="result.assignee"><strong>Assigned To: </strong>{{result.assignee}}</p>
                     <p><strong>Last Updated: </strong>{{result.updated}}</p>
                     <p><strong>Targeted Release: </strong>{{result.fixtarget}}</p>
 
