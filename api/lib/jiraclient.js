@@ -79,6 +79,11 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
                     jira_item.summary = issue.fields.summary;
                     jira_item.jirauri = config.rootUrl + "browse/" + issue.key;
                     jira_item.updated = new Date(issue.fields.updated).toDateString();
+                    if(issue.fields.assignee !== null){
+                      jira_item.assignee = issue.fields.assignee.displayName;
+                    } else {
+                      jira_item.assignee = "Unassigned";
+                    }
                     if (issue.fields.fixVersions.length > 0) {
                         jira_item.fixtarget = issue.fields.fixVersions[0].name;
                         jira_item.released = issue.fields.fixVersions[0].released;
@@ -94,11 +99,12 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
 
                     resultsProcessed++;
 
-                    if (resultsProcessed === body.issues.length)
-                        callback(null, resultArray);
+                    if (resultsProcessed === body.issues.length){
+                      stripENGSUPP(resultArray, function(arr){
+                        callback(null, arr);
+                      });
+                    }
                 });
-
-
                 //console.log(JSON.stringify(issue));
             }
             else {
@@ -148,4 +154,18 @@ function mapStatus(issue, callback) {
         description: ""
     });
 
+}
+
+function stripENGSUPP(issueArray, callback){
+  if(issueArray.results.length < 2){
+    callback(issueArray);
+  } else {
+    let tempArr = {results: []};
+    tempArr.results = issueArray.results.filter(issue => issue.status !== mappings["ENGSUPP"]);
+    if(tempArr.results.length > 0){
+      callback(tempArr);
+    } else {
+      callback(issueArray);
+    }
+  }
 }

@@ -56,6 +56,10 @@
                 this.loggedIn = loggedIn;
             });
 
+            eventBus.$on('switchMode', (mode) => {
+              this.mode = mode;
+            });
+
             if (sessionStorage.getItem('jwt') !== null)
                 this.loggedIn = true;
         }
