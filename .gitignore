@@ -30,5 +30,9 @@ node_modules
 # Editor
 .idea/
 .editorconfig
-webpack*
 dist/
+
+
+# Dev
+.env
+devtoprod.bat
