@@ -9,7 +9,6 @@ let jwtArray = [];
 
 authRouter.use(function (req, res, next) {
 
-
 next();
 });
 
@@ -41,7 +40,12 @@ authRouter.post("/", function (req, res) {
 });
 
 authRouter.get("/callback", function(req,res){
+  let code = req.params.code;
+  res.sendStatus(200);
+});
 
-})
+authRouter.post("/callback", function(req,res){
+
+});
 
 module.exports = authRouter;

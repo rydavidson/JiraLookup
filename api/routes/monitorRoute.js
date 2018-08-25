@@ -5,6 +5,10 @@ const logger = require('../lib/logger.js');
 
 module.exports = monitorRouter;
 
+monitorRouter.get('/key', function(req,res){
+  res.json({ consumerkey: "3MVG9dZJodJWITSsbGTC9oiHE5.rEyTmmyCamx9VJSIGtRcosTdhiFpMDAH2LOUEyrQgjqonHITspTCnJ0hJS"});
+});
+
 monitorRouter.post('/webhook', function(req,res){
 
 });
