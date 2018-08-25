@@ -28,3 +28,10 @@ exports.warn = function(message){
 exports.debug = function(message){
     logger.log('debug',message);
 }
+
+process.on('uncaughtException', function (err) {
+  logger.log('fatal',"UncaughtException: %s", err);
+  logzIOTransport.flush( function(callback) {
+      process.exit(1);
+    });
+});
