@@ -2,7 +2,7 @@ function authenticateUser(username, passhash, callback) {
 
   username = username.toLowerCase();
 
-  var api = window.location.href.split("/")[0] + "/api";
+    var api = window.location.href.split("/")[0] + "/api";
 
   if (username.length > 0) {
     if (passhash.length > 0) {
@@ -64,6 +64,11 @@ function createCORSRequest(method, url) {
   return xhr;
 }
 
+function authorizeAdmin(jwt){
+    var api = window.location.href.split("/")[0] + "/api/admin";
+
+}
+
 function authenticateSalesforce() {
   var key = "3MVG9dZJodJWITSsbGTC9oiHE5.rEyTmmyCamx9VJSIGtRcosTdhiFpMDAH2LOUEyrQgjqonHITspTCnJ0hJS";
   var callback_uri = window.location.href.split("/")[0] + "/auth_callback";
@@ -97,5 +102,5 @@ function authenticateSalesforce() {
 
 }
 
-export {authenticateUser, createCORSRequest, authenticateSalesforce};
+export {authenticateUser, createCORSRequest, authenticateSalesforce, authorizeAdmin};
 

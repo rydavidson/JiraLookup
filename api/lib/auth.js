@@ -17,7 +17,7 @@ exports.authenticateUser = function (username, hashedPassword, callback) {
                 logger.debug("Checking password");
 
                 if (hashedPassword.toUpperCase() === userObj.password.toUpperCase()) {
-                    callback(jwt.sign({ "user": username, "roles": userObj.roles}, process.env.SECRET, { expiresIn: 3600 }));
+                    callback(jwt.sign({ "user": username, "scopes": userObj.scopes}, process.env.SECRET, { expiresIn: 3600 }));
                 }
                 else {
                     logger.error(constants.credentialsIncorrect);

@@ -1,12 +1,14 @@
 import Vue from 'vue'
+import Vuetify from 'vuetify'
 import App from './App.vue'
 import navbar from './components/jl-navbar.vue'
 import dosearch from './components/jl-do-search.vue'
-import resultitems from './components/jl-result-items.vue'
 import dologin from './components/jl-do-login.vue'
+import adminpage from './components/jl-admin.vue'
 import VueRouter from 'vue-router'
 import BootstrapVue from 'bootstrap-vue'
 import store from './store.js'
+import auth from './lib/auth.js';
 
 // css
 import 'bootstrap/dist/css/bootstrap.css'
@@ -14,6 +16,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.use(VueRouter);
 Vue.use(BootstrapVue);
+Vue.use(Vuetify);
 
 
 const routes = [
@@ -26,19 +29,12 @@ const routes = [
         }
     },
     {
-        path: '/search',
-        name: 'search',
-        component: dosearch,
+        path: '/admin',
+        name: 'admin',
+        component: adminpage,
         meta: {
-            requiresAuth: true
-        }
-    },
-    {
-        path: '/result',
-        name: 'result',
-        component: resultitems,
-        meta: {
-            requiresAuth: true
+            requiresAuth: true,
+            requiresAdmin: true
         }
     },
     {
@@ -48,33 +44,51 @@ const routes = [
         meta: {
             requiresAuth: true
         }
-    }
+    },
+    // {
+    //     path: '/404',
+    //     component: NotFound
+    // },
+    {
+        path: '*',
+        redirect: '/'
+    },
 ]
 
 
 const router = new VueRouter({
+    // mode: 'history',
     routes
 })
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (sessionStorage.getItem('jwt') == null) {
-            next({
-                path: '/login',
-                params: {nextUrl: to.fullPath}
-            })
-        } else {
-            next()
+        if(sessionStorage.getItem('jwt') !== null){
+            if(store.state.token === null){
+                store.commit('setToken', sessionStorage.getItem('jwt'));
+            }
         }
-    } else if (to.matched.some(record => record.meta.guest)) {
-        if (sessionStorage.getItem('jwt') == null) {
-            next()
+        if (store.state.token !== null) {
+            if (to.matched.some(record => record.meta.requiresAdmin)) {
+                if (auth.authorizeAdmin(store.state.token)) {
+                    next();
+                }
+                else {
+                    next({path: '/'});
+                }
+            }
+            else {
+                next();
+            }
         }
         else {
-            next({name: from})
+            next({path: '/login?from=' + to.path});
         }
+    }
+    else if (to.matched.some(record => record.meta.guest)) {
+        next();
     } else {
-        next()
+        next();
     }
 })
 
@@ -86,15 +100,3 @@ const app = new Vue({
     router,
     store
 }).$mount('#app')
-
-const nav = new Vue({
-    render: h => h(navbar),
-    router,
-    store
-}).$mount('#nav')
-
-// const login = new Vue({
-//     render: h => h(dologin),
-//     router,
-//     store
-// })

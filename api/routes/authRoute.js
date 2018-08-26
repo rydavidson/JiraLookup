@@ -39,6 +39,16 @@ authRouter.post("/", function (req, res) {
     }
 });
 
+authRouter.post("/authorize/:id", function(req,res){
+    let token = req.get("Authorization");
+    let scope = req.params.id;
+
+    if(token === null || token === ""){
+        res.status(constants.missingToken.httpCode).json(constants.missingToken.message);
+    }
+
+});
+
 authRouter.get("/callback", function(req,res){
   let code = req.params.code;
   res.sendStatus(200);

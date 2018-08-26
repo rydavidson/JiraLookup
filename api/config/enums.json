@@ -1,12 +1,17 @@
 {
   "credentialsIncorrect": {
     "message": "Username or password is incorrect",
-    "httpCode": 403,
+    "httpCode": 401,
     "type": "error"
   },
   "authError": {
     "message": "Unable to authenticate",
     "httpCode": 500,
+    "type": "error"
+  },
+  "missingToken": {
+    "message": "Missing Authorization header",
+    "httpCode": 401,
     "type": "error"
   },
   "genericError": {
@@ -18,11 +23,5 @@
     "message": "Empty response",
     "httpCode": 204,
     "type": "warn"
-  },
-  "jiraSearchType": {
-    "searchType": "jiraKey"
-  },
-  "sfSearchType": {
-    "searchType": "sfid"
   }
 }

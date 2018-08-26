@@ -29,7 +29,7 @@ searchRouter.get('/case/:id', function (req, res) {
     }
 
 
-    jira.getJiraItem(constants.sfSearchType.searchType, searchKey, function (err, result) {
+    jira.getJiraItem(config.sfSearchType.searchType, searchKey, function (err, result) {
       if (isErr(err)) {
         handleErr(err, res);
       } else if (err === constants.emptyResponse) {
@@ -65,7 +65,7 @@ searchRouter.get('/jira/:id', function (req, res) {
       }
     }
 
-    jira.getJiraItem(constants.jiraSearchType.searchType, searchKey, function (err, result) {
+    jira.getJiraItem(config.jiraSearchType.searchType, searchKey, function (err, result) {
       if (isErr(err)) {
         handleErr(err, res);
       } else if (err === constants.emptyResponse) {

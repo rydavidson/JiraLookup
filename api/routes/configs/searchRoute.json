@@ -1,1 +1,8 @@
-{}
+{
+  "jiraSearchType": {
+    "searchType": "jiraKey"
+  },
+  "sfSearchType": {
+    "searchType": "sfid"
+  }
+}

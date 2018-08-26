@@ -28,11 +28,11 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
     let options;
 
     switch(String(searchType)){
-        case String(constants.sfSearchType.searchType): {
+        case String(config.sfSearchType.searchType): {
             options = sfidOptions;
             break;
         }
-        case String(constants.jiraSearchType.searchType): {
+        case String(config.jiraSearchType.searchType): {
             options = jiraKeyOptions;
             break;
         }

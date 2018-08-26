@@ -4,8 +4,7 @@ const ObjectId = Schema.Types.ObjectId;
 const scopeSchema = new Schema();
 
 scopeSchema.add({
-    id: { type: String, required: true },
-    inheritedScopes: [{type: ObjectId, ref: "scope"}]
+    id: { type: String, required: true }
 })
 
 exports.getModel = function (callback) {

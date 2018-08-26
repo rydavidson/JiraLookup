@@ -37,9 +37,12 @@
         },
         methods: {
             logOut() {
-                this.$parent.$router.replace('/login');
+                this.$store.commit('setToken', null);
+                this.$store.commit('setPassword', null);
                 sessionStorage.removeItem('jwt');
                 eventBus.$emit('loggedIn', false);
+                this.$parent.$router.replace('/login');
+
             },
             switchMode(selectedMode) {
                 console.log(selectedMode);

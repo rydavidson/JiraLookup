@@ -1,35 +1,58 @@
 <template>
-    <div>
-        <div class="card" v-if="showSingleResult" v-for="result in results" :key="result.key">
-            <div class="card-header">
-                <p><a :href="result.jirauri" target="_blank">Jira Item: {{result.key}} <span
-                        class="fas fa-external-link-alt"></span></a></p>
-                <p v-if="result.sfuri"><a :href="result.sfuri" target="_blank">Case #: {{result.sfid}} <span
-                        class="fas fa-external-link-alt"></span></a></p>
-            </div>
-            <div class="card-main">
-                <p><strong>{{result.summary}}</strong></p>
-                <i class="material-icons">{{result.status.icon}}</i>
-                <div class="main-description">
-                    <p id="public-status" v-b-tooltip.hover :title="result.status.description"><strong>Status: </strong>{{result.status.publicStatus}}
-                    </p>
-                    <p v-if="result.assignee"><strong>Assigned To: </strong>{{result.assignee}}</p>
-                    <p><strong>Last Updated:</strong>{{result.updated}}</p>
-                    <p v-b-tooltip.hover title="This is not a guaranteed release timeframe, and may change at any time."><strong>Targeted Release: </strong>{{result.fixtarget}} (Subject to change)</p>
+    <v-container fluid grid-list-lg>
+        <v-layout>
+            <v-flex xs12 sm6 offset-sm3>
+                <v-card raised class="card" v-if="showSingleResult" v-for="result in results" :key="result.key">
+                    <v-card-title>
+                        <div>
+                            <p><a :href="result.jirauri" target="_blank">Jira Item: {{result.key}} <span
+                                    class="fas fa-external-link-alt"></span></a></p>
+                            <p v-if="result.sfuri"><a :href="result.sfuri" target="_blank">Case #: {{result.sfid}} <span
+                                    class="fas fa-external-link-alt"></span></a></p>
+                        </div>
+                    </v-card-title>
+                    <v-card-text>
+                            <p><strong>{{result.summary}}</strong></p>
+                            <i class="material-icons">{{result.status.icon}}</i>
+                            <div class="main-description">
+                                <v-tooltip>
+                                <span slot="activator"><strong>Status: </strong>{{result.status.publicStatus}}</span>
+                                    <span>{{result.status.description}}</span>
+                                </v-tooltip>
+                                <p v-if="result.assignee"><strong>Assigned To: </strong>{{result.assignee}}</p>
+                                <p><strong>Last Updated:</strong>{{result.updated}}</p>
+                                <v-tooltip>
+                                    <span slot="activator">
+                                        <strong>Targeted Release: </strong>{{result.fixtarget}} (Subject to change)
+                                    </span>
+                                    <span>This is not a guaranteed release timeframe, and may change at any time.</span>
+                                </v-tooltip>
+                                <p><strong>Description: </strong></p>
+                                <p id="result-description" v-html="result.title"></p>
+                            </div>
+                    </v-card-text>
 
-                    <p><strong>Description: </strong></p>
-                    <p id="result-description" v-html="result.title"></p>
-                </div>
-            </div>
-        </div>
-        <b-alert id="small-alert"
-                 variant="danger"
-                 dismissible
-                 :show="showDismissibleAlert"
-                 @dismissed="showDismissibleAlert=false">
-            {{ err }}
-        </b-alert>
-    </div>
+                    <v-card-actions>
+
+                        <v-btn
+                                slot="activator"
+                                color="blue"
+                                dark
+                        >
+                            Pin
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-flex>
+        </v-layout>
+        <v-alert
+                dismissible
+                type="error"
+                :value="showDismissibleAlert"
+        >
+            {{err}}
+        </v-alert>
+    </v-container>
 </template>
 
 <script>
@@ -44,7 +67,8 @@
                 showSingleResult: false,
                 showDismissibleAlert: false,
                 err: "",
-                results: []
+                results: [],
+                menu: false
             }
         }
 
@@ -97,16 +121,7 @@
 <style scoped>
 
     .card {
-        width: 20%;
-        min-width: 25rem;
-        border: 1px solid #3aadef;
-        border-radius: 4px;
-        overflow: hidden;
-        display: inline-block;
-        flex-direction: column;
-        margin: auto;
-        max-height: 80%;
-        text-overflow: ellipsis;
+        background-color: #ddf3ff
     }
 
     .card-header {

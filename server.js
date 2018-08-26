@@ -8,6 +8,7 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const compression = require('compression');
 const sslRedirect = require('heroku-ssl-redirect');
+const history = require('connect-history-api-fallback');
 const db = require('./api/lib/mongolib');
 const logger = require('./api/lib/logger.js');
 
@@ -22,6 +23,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(compression({filter: shouldCompress}));
 app.use(sslRedirect());
+//app.use(history({index: '/ui/public/index.html'}));
 
 app.use(function (req, res, next) {
   if (req.url === '/')
