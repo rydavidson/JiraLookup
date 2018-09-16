@@ -14,8 +14,8 @@
                     <p id="public-status" v-b-tooltip.hover :title="result.status.description"><strong>Status: </strong>{{result.status.publicStatus}}
                     </p>
                     <p v-if="result.assignee"><strong>Assigned To: </strong>{{result.assignee}}</p>
-                    <p><strong>Last Updated: </strong>{{result.updated}}</p>
-                    <p><strong>Targeted Release: </strong>{{result.fixtarget}}</p>
+                    <p><strong>Last Updated:</strong>{{result.updated}}</p>
+                    <p v-b-tooltip.hover title="This is not a guaranteed release timeframe, and may change at any time."><strong>Targeted Release: </strong>{{result.fixtarget}} (Subject to change)</p>
 
                     <p><strong>Description: </strong></p>
                     <p id="result-description" v-html="result.title"></p>
@@ -158,7 +158,7 @@
     }
 
     #result-description {
-        max-height: 45vh;
+        max-height: 35vh;
     }
 
     p {

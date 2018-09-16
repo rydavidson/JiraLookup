@@ -3,7 +3,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('@glimpse/glimpse').init();
 }
 
-require('dotenv').config();
+//require('dotenv').config();
 const express = require("express");
 const bodyParser = require('body-parser');
 const compression = require('compression');
@@ -14,7 +14,7 @@ const logger = require('./api/lib/logger.js');
 // express config
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3002;
 
 // middleware
 
@@ -73,6 +73,10 @@ function shouldCompress(req, res) {
     // don't compress responses with this request header
     return false
   }
+  if(req.originalUrl.indexOf("api") > -1){
+    // don't compress api responses
+    return false;
+  }
 
   // fallback to standard filter function
   return compression.filter(req, res)
@@ -94,7 +98,8 @@ app.use('/api/admin', adminRouter);
 app.use('/api/monitor', monitorRouter);
 
 // startup
-
 db.connect();
 app.listen(port);
 console.log("Server listening on port " + port);
+
+

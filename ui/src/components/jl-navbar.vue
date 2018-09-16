@@ -7,7 +7,7 @@
         <b-collapse is-nav id="nav_collapse">
             <b-navbar-nav class="ml-auto">
                 <b-navbar-brand>Search Mode: {{mode}}</b-navbar-brand>
-                <b-nav-item-dropdown v-if="caseModeEnabled && jiraModeEnabled" id="searchDropdown"
+                <b-nav-item-dropdown v-if="caseModeEnabled && jiraModeEnabled && showSearchModeToggle" id="searchDropdown"
                                      text="Switch Search Mode" right>
                     <b-dropdown-item v-if="caseModeEnabled" href="#" @click="switchMode('case')">Salesforce Case
                     </b-dropdown-item>
@@ -32,7 +32,8 @@
                 mode: "Case #",
                 loggedIn: false,
                 caseModeEnabled: true,
-                jiraModeEnabled: true
+                jiraModeEnabled: true,
+                showSearchModeToggle: false
             }
         },
         methods: {
