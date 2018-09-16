@@ -54,8 +54,8 @@ searchRouter.get('/jira/:id', function (req, res) {
 
   if (searchKey.length > 0) {
 
-    let jiraReg = /^[a-z]*-[0-9]*$/gmi;
-    let jiraReg2 = /^[a-z]*[0-9]*$/gmi;
+    let jiraReg = /^[a-z]*-[0-9]+$/gmi;
+    let jiraReg2 = /^[a-z]*[0-9]+$/gmi;
 
     if(jiraReg.exec(searchKey) === null){
       if(jiraReg2.exec(searchKey) !== null){
