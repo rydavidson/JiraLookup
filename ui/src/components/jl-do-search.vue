@@ -46,7 +46,9 @@
       onSubmit(evt) {
 
         var sfReg = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]/gmi;
+        var sfReg2 = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]/gmi;
         var jiraReg = /^[a-z]*-[0-9]*$/gmi;
+        var jiraReg2 = /^[a-z]*[0-9]*$/gmi;
 
 
         evt.preventDefault();
@@ -62,14 +64,16 @@
         }
 
         var sf = sfReg.exec(this.searchKey);
+        var sf2 = sfReg2.exec(this.searchKey);
         var j = jiraReg.exec(this.searchKey);
+        var j2 = jiraReg2.exec(this.searchKey);
 
-        if (sf !== null) {
+        if (sf !== null || sf2 != null) {
           eventBus.$emit('switchMode', 'Case #');
           api = apiRoot + "/search/case/";
         }
 
-        if (j !== null) {
+        if (j !== null || j2 != null) {
           eventBus.$emit('switchMode', 'Jira ID');
           api = apiRoot + "/search/jira/";
         }

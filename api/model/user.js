@@ -9,7 +9,8 @@ require('./scope.js').getModel();
 const userSchema = new Schema({
     username: {type: String, required: true},
     password: {type: String, required: true},
-    roles: [{type: ObjectId, ref: "role"}]
+    roles: [{type: ObjectId, ref: "role"}],
+    refreshToken: {type: String, required: false}
 });
 
 function getSchema() {

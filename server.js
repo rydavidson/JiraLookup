@@ -73,6 +73,10 @@ function shouldCompress(req, res) {
     // don't compress responses with this request header
     return false
   }
+  if(req.originalUrl.indexOf("api") > -1){
+    // don't compress api responses
+    return false;
+  }
 
   // fallback to standard filter function
   return compression.filter(req, res)
