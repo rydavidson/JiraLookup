@@ -158,7 +158,7 @@
     }
 
     #result-description {
-        max-height: 45vh;
+        max-height: 35vh;
     }
 
     p {

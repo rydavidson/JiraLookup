@@ -10,6 +10,4 @@ adminRouter.post('/user', function(req,res){
 
 });
 
-adminRouter.
-
 module.exports = adminRouter;

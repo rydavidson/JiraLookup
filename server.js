@@ -14,7 +14,7 @@ const logger = require('./api/lib/logger.js');
 // express config
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3002;
 
 // middleware
 
@@ -98,7 +98,8 @@ app.use('/api/admin', adminRouter);
 app.use('/api/monitor', monitorRouter);
 
 // startup
-
 db.connect();
 app.listen(port);
 console.log("Server listening on port " + port);
+
+

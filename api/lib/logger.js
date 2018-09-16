@@ -2,7 +2,6 @@ const winston = require('winston');
 const logzioWinstonTransport = require('winston-logzio');
 
 const winstonFactory = ({ token }) => {
-
     const loggerOptions = {
         token:  token,
         host:   "listener.logz.io",
@@ -30,8 +29,9 @@ exports.debug = function(message){
 }
 
 process.on('uncaughtException', function (err) {
+    console.log(err);
   logger.log('fatal',"UncaughtException: %s", err);
-  logzIOTransport.flush( function(callback) {
-      process.exit(1);
-    });
+  // logzIOTransport.flush( function(callback) {
+  //     process.exit(1);
+  //   });
 });
