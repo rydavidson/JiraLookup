@@ -46,10 +46,10 @@
         methods: {
             onSubmit(evt) {
 
-                var sfReg = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]/gmi;
-                var sfReg2 = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]/gmi;
-                var jiraReg = /^[a-z]*-[0-9]*$/gmi;
-                var jiraReg2 = /^[a-z]*[0-9]*$/gmi;
+                var sfReg = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9]+/gmi;
+                var sfReg2 = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9]+/gmi;
+                var jiraReg = /^[a-z]*-[0-9]+$/gmi;
+                var jiraReg2 = /^[a-z]*[0-9]+$/gmi;
 
 
                 evt.preventDefault();

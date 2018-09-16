@@ -13,10 +13,8 @@ searchRouter.get('/case/:id', function (req, res) {
     res.sendStatus(400);
   }
 
-  let sfReg = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]/gmi;
-  let sfReg2 = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][0-9][0-9][0-9][0-9][0-9][0-9]/gmi;
-
-
+  let sfReg = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9]+/gmi;
+  let sfReg2 = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][0-9][0-9][0-9][0-9][0-9]+/gmi;
 
   if (searchKey.length > 0) {
 
