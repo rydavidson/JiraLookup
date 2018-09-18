@@ -20,7 +20,7 @@ function getConnectionString(){
 
 exports.connect = function() {
     return new Promise(function (resolve, reject) {
-        mongoose.connect(getConnectionString()).then(
+        mongoose.connect(getConnectionString(),{ useNewUrlParser: true }).then(
             () => {
                 mongoose.set('debug', true);
                 logger.info("Database connection established");

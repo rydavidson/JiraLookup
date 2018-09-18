@@ -11,7 +11,7 @@ const sslRedirect = require('heroku-ssl-redirect');
 const cluster = require('cluster');
 const db = require('./api/lib/mongolib');
 const logger = require('./api/lib/logger.js');
-const numCPUs = require('os').cpus().length;
+const numCPUs = process.env.WORKER_COUNT || require('os').cpus().length;
 
 
 if (cluster.isMaster) {
