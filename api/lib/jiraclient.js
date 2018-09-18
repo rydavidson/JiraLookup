@@ -58,7 +58,7 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
         //console.log("Body: " +  JSON.stringify(body));
 
         body = JSON.parse(body);
-        logger.info(body);
+        //logger.info(body);
 
         if (!err && res.statusCode == 200) {
             if (body.total > 0) {
@@ -78,6 +78,7 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
                     jira_item.summary = issue.fields.summary;
                     jira_item.jirauri = config.rootUrl + "browse/" + issue.key;
                     jira_item.updated = new Date(issue.fields.updated).toDateString();
+                    jira_item.resolution = issue.fields.resolution !== null ? issue.fields.resolution.name : "Unknown";
                     if(issue.fields.assignee !== null){
                       jira_item.assignee = issue.fields.assignee.displayName;
                     } else {
@@ -99,7 +100,7 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
                     resultsProcessed++;
 
                     if (resultsProcessed === body.issues.length){
-                      logger.info(resultArray);
+                      //logger.info(resultArray);
                       stripENGSUPP(resultArray, function(arr){
                         logger.info("Stripped ENGSUPP");
                         logger.debug(resultArray);
@@ -137,28 +138,29 @@ function mapStatus(issue, callback) {
     for (let stat in mappings) {
         if (issue.fields.status.name === mappings[stat].name) {
             if (issue.fields.project.key === "ENGSUPP") {
-              logger.info(`Mapping ${issue} to ENGSUPP`);
+              logger.info(`Mapping ${issue.key} to ENGSUPP`);
                 callback(mappings["ENGSUPP"]);
                 return;
             }
-            logger.info(`Mapping ${issue} to ${stat.name}`);
+            logger.info(`Mapping ${issue.key} to ${mappings[stat].name}`);
             callback(mappings[stat]);
             return;
         } else {
             if (issue.fields.project.key === "ENGSUPP") {
-                logger.info(`Mapping ${issue} to ENGSUPP`);
+                logger.info(`Mapping ${issue.key} to ENGSUPP`);
                 callback(mappings["ENGSUPP"]);
                 return;
             }
         }
     }
 
-  logger.warn(`Issue ${issue} couldn't be mapped, using Jira contents instead`);
+  logger.warn(`Issue ${issue.key} couldn't be mapped, using Jira contents instead`);
     callback({
         name: issue.fields.status.name,
         publicStatus: issue.fields.status.name,
         description: ""
     });
+
 
 }
 
