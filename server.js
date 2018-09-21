@@ -11,8 +11,9 @@ const sslRedirect = require('heroku-ssl-redirect');
 const cluster = require('cluster');
 const db = require('./api/lib/mongolib');
 const logger = require('./api/lib/logger.js');
-const numCPUs = process.env.WORKER_COUNT || require('os').cpus().length;
+const auth = require('./api/lib/auth.js');
 
+const numCPUs = process.env.WORKER_COUNT || require('os').cpus().length;
 
 if (cluster.isMaster) {
   masterProcess();
@@ -56,37 +57,27 @@ function childProcess() {
   });
 
   app.use('/api', function (req, res, next) {
+    logger.debug(req.method + " request");
     if (req.url.indexOf('auth') === -1) {
       if (req.method === 'OPTIONS') {
-        let headers = {};
-        headers["Access-Control-Allow-Origin"] = req.get("Origin");
-        headers["Access-Control-Allow-Methods"] = "POST, PUT, DELETE, GET, OPTIONS";
-        //headers["Access-Control-Allow-Credentials"] = false;
-        headers["Access-Control-Max-Age"] = '86400'; // 24 hours
-        headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Authorization";
-        res.writeHead(200, headers);
+        res.writeHead(200, getCORSHeaders(req, "POST, GET, OPTIONS"));
         res.end();
       }
       else {
-        logger.info(req.method + " request");
-        res.set("Access-Control-Allow-Origin", req.get("Origin"));
-        res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-        //res.set("Access-Control-Allow-Credentials", false);
         if (!req.get("Authorization")) {
-          res.sendStatus(401);
+          res.status(401).json("Missing Authorization token");
         } else {
-          next();
+          let authorized = auth.authorizeUser(req.get("Authorization"));
+          if (!authorized) {
+            res.status(403).json("Invalid or expired Authorization token");
+          } else {
+            next();
+          }
         }
       }
-    } else {
+    } else { // the request is /auth
       if (req.method === 'OPTIONS') {
-        let headers = {};
-        headers["Access-Control-Allow-Origin"] = req.get("Origin");
-        headers["Access-Control-Allow-Methods"] = "POST, OPTIONS";
-        //headers["Access-Control-Allow-Credentials"] = false;
-        headers["Access-Control-Max-Age"] = '86400'; // 24 hours
-        headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Authorization";
-        res.writeHead(200, headers);
+        res.writeHead(200, getCORSHeaders("POST, OPTIONS"));
         res.end();
       } else {
         next();
@@ -103,9 +94,17 @@ function childProcess() {
       // don't compress api responses
       return false;
     }
-
     // fallback to standard filter function
     return compression.filter(req, res)
+  }
+
+  function getCORSHeaders(req, verbs) {
+    let headers = {};
+    headers["Access-Control-Allow-Origin"] = req.get("Origin");
+    headers["Access-Control-Allow-Methods"] = verbs;
+    headers["Access-Control-Max-Age"] = '86400'; // 24 hours
+    headers["Access-Control-Allow-Headers"] = "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Authorization";
+    return headers;
   }
 
 // routers
@@ -124,6 +123,7 @@ function childProcess() {
   app.use('/api/monitor', monitorRouter);
 
 // startup
+
   db.connect();
   app.listen(port);
   console.log(`Listening on port ${port}`);
