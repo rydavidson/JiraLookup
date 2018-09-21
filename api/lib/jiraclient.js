@@ -1,6 +1,6 @@
 const request = require('request');
 const constants = require('../config/enums.json');
-const mappings = require('./jiraStatusMappings.js');
+const mappings = require('./configs/jiraStatusMappings.json');
 const config = require('./configs/jiraConfig.json');
 const logger = require('../lib/logger.js');
 // require('request').debug = true
@@ -54,19 +54,14 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
 
     request(options, function (err, res, body) {
 
-        //console.log("Res" + JSON.stringify(res));
-        //console.log("Body: " +  JSON.stringify(body));
-
         body = JSON.parse(body);
-        //logger.info(body);
 
-        if (!err && res.statusCode == 200) {
+        if (!err && res.statusCode === 200) {
+          logger.debug(`Checking total count in body`);
             if (body.total > 0) {
-
+            logger.debug(`Got ${body.total} results from Jira`);
                 let resultArray = {results: []};
-
                 let resultsProcessed = 0;
-
                 body.issues.forEach(function (issue) {
                     let jira_item = {};
 
@@ -79,6 +74,7 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
                     jira_item.jirauri = config.rootUrl + "browse/" + issue.key;
                     jira_item.updated = new Date(issue.fields.updated).toDateString();
                     jira_item.resolution = issue.fields.resolution !== null ? issue.fields.resolution.name : "Unknown";
+                    jira_item.raw_status = issue.fields.status.name;
                     if(issue.fields.assignee !== null){
                       jira_item.assignee = issue.fields.assignee.displayName;
                     } else {
@@ -100,18 +96,17 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
                     resultsProcessed++;
 
                     if (resultsProcessed === body.issues.length){
-                      //logger.info(resultArray);
-                      stripENGSUPP(resultArray, function(arr){
-                        logger.info("Stripped ENGSUPP");
-                        logger.debug(resultArray);
+                      logger.debug(`Finished processing all results. Results processed: ${resultsProcesses}`);
+                      logger.debug(`Beginning post processing`);
+                      stripENGSUPP(resultArray, searchKey, function(arr){
+                        logger.silly(JSON.stringify(resultArray));
+                        logger.debug(`Finished post processing`);
                         callback(null, arr);
                       });
                     }
                 });
-                //console.log(JSON.stringify(issue));
             }
             else {
-                //console.log(body);
                 callback(constants.emptyResponse, constants.emptyResponse.message);
             }
         } else {
@@ -160,19 +155,25 @@ function mapStatus(issue, callback) {
         publicStatus: issue.fields.status.name,
         description: ""
     });
-
-
 }
 
-function stripENGSUPP(issueArray, callback){
+function stripENGSUPP(issueArray, key, callback){
   if(issueArray.results.length < 2){
     callback(issueArray);
   } else {
+    logger.debug(`Got multiple results for ${key}, checking for ENGSUPP`);
     let tempArr = {results: []};
     tempArr.results = issueArray.results.filter(issue => issue.status !== mappings["ENGSUPP"]);
+
     if(tempArr.results.length > 0){
+      if(tempArr.results.length === issueArray.results.length){
+        logger.debug(`No ENGSUPP results for ${key}`);
+      } else{
+        logger.debug(`Removed ${issueArray.results.length - tempArr.results.length} ENGSUPP entries from results for ${key}`);
+      }
       callback(tempArr);
     } else {
+      logger.debug("All results were ENGSUPP, returning original results");
       callback(issueArray);
     }
   }
