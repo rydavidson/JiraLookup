@@ -24,5 +24,10 @@
   },
   "sfSearchType": {
     "searchType": "sfid"
+  },
+  "invalidParameterError": {
+    "message": "Invalid parameter",
+    "httpCode": 400,
+    "type": "error"
   }
 }
