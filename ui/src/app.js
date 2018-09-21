@@ -47,12 +47,12 @@ const routes = [
       requiresAuth: true
     }
   }
-]
+];
 
 
 const router = new VueRouter({
   routes
-})
+});
 
 router.beforeEach((to, from, next) => {
   if(to.matched.some(record => record.meta.requiresAuth)) {
@@ -74,24 +74,24 @@ router.beforeEach((to, from, next) => {
   }else {
     next()
   }
-})
+});
 
 export const eventBus = new Vue();
 
 const app = new Vue({
   render: h => h(App),
   router
-}).$mount('#app')
+}).$mount('#app');
 
 const nav = new Vue({
   render: h => h(navbar),
   router
-}).$mount('#nav')
+}).$mount('#nav');
 
 const login = new Vue({
   render: h => h(dologin),
   router
-})
+});
 
 
 

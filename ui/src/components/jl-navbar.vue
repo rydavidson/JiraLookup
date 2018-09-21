@@ -70,8 +70,4 @@
 
 <style scoped>
 
-    .bg-info {
-        background-color: #002c76 !important;
-    }
-
 </style>

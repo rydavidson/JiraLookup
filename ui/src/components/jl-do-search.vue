@@ -46,30 +46,30 @@
         methods: {
             onSubmit(evt) {
 
-                var sfReg = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9]+/gmi;
-                var sfReg2 = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9]+/gmi;
-                var jiraReg = /^[a-z]*-[0-9]+$/gmi;
-                var jiraReg2 = /^[a-z]*[0-9]+$/gmi;
+              const sfReg = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9]+/gmi;
+              const sfReg2 = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9]+/gmi;
+              const jiraReg = /^[a-z]*-[0-9]+$/gmi;
+              const jiraReg2 = /^[a-z]*[0-9]+$/gmi;
 
 
-                evt.preventDefault();
+              evt.preventDefault();
 
-                var apiRoot = window.location.href.split("/")[0] + "/api";
-                var api;
+              const apiRoot = window.location.href.split("/")[0] + "/api";
+              let api;
 
-                api = apiRoot + "/search/case/";
+              api = apiRoot + "/search/case/";
 
                 if (this.searchMode === 'Jira ID') {
 
                     api = apiRoot + "/search/jira/";
                 }
 
-                var sf = sfReg.exec(this.searchKey);
-                var sf2 = sfReg2.exec(this.searchKey);
-                var j = jiraReg.exec(this.searchKey);
-                var j2 = jiraReg2.exec(this.searchKey);
+              const sf = sfReg.exec(this.searchKey);
+              const sf2 = sfReg2.exec(this.searchKey);
+              const j = jiraReg.exec(this.searchKey);
+              const j2 = jiraReg2.exec(this.searchKey);
 
-                if (sf !== null || sf2 != null) {
+              if (sf !== null || sf2 != null) {
                     eventBus.$emit('switchMode', 'Case #');
                     api = apiRoot + "/search/case/";
                 }
@@ -79,17 +79,17 @@
                     api = apiRoot + "/search/jira/";
                 }
 
-                var xhr = Auth.createCORSRequest("GET", api + this.searchKey);
+              const xhr = Auth.createCORSRequest("GET", api + this.searchKey);
 
-                //xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+              //xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 xhr.setRequestHeader("Authorization", sessionStorage.getItem("jwt"));
 
                 xhr.onreadystatechange = function () {
 
                     if (this.readyState === XMLHttpRequest.DONE) {
                         if (this.status === 203 || this.status === 200 || this.status === 304) {
-                            var res = JSON.parse(this.responseText);
-                            eventBus.$emit('resultReturned', res);
+                          const res = JSON.parse(this.responseText);
+                          eventBus.$emit('resultReturned', res);
                         }
                         else if (this.status === 204) {
                             this.showResults = false;
@@ -106,7 +106,7 @@
                             // console.error(this.status);
                         }
                     }
-                }
+                };
                 xhr.send();
             }
         },

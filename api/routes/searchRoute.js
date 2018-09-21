@@ -85,7 +85,7 @@ searchRouter.get('/jira/:id', function (req, res) {
   } else {
     res.sendStatus(400);
   }
-})
+});
 
 
 function isErr(err) {

@@ -29,7 +29,7 @@ exports.authenticateUser = function (username, hashedPassword, callback) {
       callback(constants.authError);
     }
   });
-}
+};
 
 exports.authorizeUser = function (_jwt) {
   let secret = process.env.SECRET;
@@ -39,7 +39,7 @@ exports.authorizeUser = function (_jwt) {
     logger.error("JWT verification error: " + err);
     return false;
   }
-}
+};
 
 exports.authenticateUserLocal = function (username, hashedPassword, callback) {
 
@@ -57,7 +57,7 @@ exports.authenticateUserLocal = function (username, hashedPassword, callback) {
         }
       }
       else {
-        console.debug("username: " + username + " is incorrect, expected " + process.env.ACCELAUSER)
+        console.debug("username: " + username + " is incorrect, expected " + process.env.ACCELAUSER);
         callback(constants.credentialsIncorrect);
       }
     }
@@ -76,7 +76,7 @@ exports.authenticateUserLocal = function (username, hashedPassword, callback) {
         }
       }
       else {
-        console.debug("username: " + username + " is incorrect, expected " + process.env.ACCELAUSER)
+        console.debug("username: " + username + " is incorrect, expected " + process.env.ACCELAUSER);
         callback(constants.credentialsIncorrect);
       }
     }
@@ -84,7 +84,7 @@ exports.authenticateUserLocal = function (username, hashedPassword, callback) {
       callback(constants.authError);
     }
   }
-}
+};
 
 
 function isErr(err) {

@@ -66,10 +66,10 @@
                 this.showDismissibleAlert = false;
                 this.err = "";
                 this.results = [];
-                var self = this;
-                result.results.forEach(function (e) {
-                    var regger = /\r?\n|\r/g;
-                    e.title = self.escapeHtml(e.title);
+              const self = this;
+              result.results.forEach(function (e) {
+                  const regger = /\r?\n|\r/g;
+                  e.title = self.escapeHtml(e.title);
                     // console.log(regger.test(e.title));
                     e.title = e.title.replace(regger, "<br/>");
                     // console.log(e.title);
@@ -162,7 +162,7 @@
     }
 
     p {
-        margin-bottom: 0rem;
+        margin-bottom: 0;
     }
 
     nav {

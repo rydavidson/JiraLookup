@@ -3,7 +3,6 @@
 //   require('@glimpse/glimpse').init();
 // }
 
-//require('dotenv').config();
 const express = require("express");
 const bodyParser = require('body-parser');
 const compression = require('compression');
@@ -25,7 +24,7 @@ cluster.on('exit', (worker) => {
   logger.error(`Worker ${worker.id} has terminated`);
   logger.debug("Creating a new worker");
   cluster.fork()
-})
+});
 
 function masterProcess() {
   logger.info(`Master ${process.pid} is running`);

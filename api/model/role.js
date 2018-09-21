@@ -9,10 +9,10 @@ const roleSchema = new Schema({
 
 exports.getModel = function(callback){
     return mongoose.model('role', roleSchema);
-}
+};
 
 exports.getSchema = function(){
     return roleSchema;
-}
+};
 
 module.exports.roleSchema = roleSchema;

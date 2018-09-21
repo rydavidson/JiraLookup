@@ -13,7 +13,7 @@ function getConnectionString(){
 
     cfg.password = process.env.ATLAS_PASSWORD;
 
-    let conn = `${cfg.prefix}${cfg.user}:${cfg.password}@${cfg.host}/${cfg.database}?retryWrites=${cfg.retryWrites}`
+    let conn = `${cfg.prefix}${cfg.user}:${cfg.password}@${cfg.host}/${cfg.database}?retryWrites=${cfg.retryWrites}`;
     logger.debug("Obtained connection string: " + conn);
     return conn;
 }
@@ -32,6 +32,6 @@ exports.connect = function() {
             }
         )
     });
-}
+};
 exports.connected = connected;
 

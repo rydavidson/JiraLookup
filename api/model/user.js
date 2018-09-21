@@ -27,7 +27,6 @@ function getUser(username, callback) {
             () => {
                 db.connected = true;
                 getUser(username, callback);
-                return;
             },
             err => {
                 logger.error(err);

@@ -56,10 +56,10 @@
         methods: {
             onSubmit(evt) {
                 evt.preventDefault();
-                var hash = crypto.createHash('sha256');
-                var pass = hash.update(this.form.password).digest('hex');
-                var self = this;
-                Auth.authenticateUser(this.form.username, pass, function (jwt) {
+              const hash = crypto.createHash('sha256');
+              const pass = hash.update(this.form.password).digest('hex');
+              const self = this;
+              Auth.authenticateUser(this.form.username, pass, function (jwt) {
                     if (jwt instanceof Error) {
                         self.form.variant = "danger";
                         self.form.err = jwt.message;

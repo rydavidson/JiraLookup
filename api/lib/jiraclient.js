@@ -23,7 +23,7 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
             "Authorization": "Basic " + process.env.JIRA_AUTH_TOKEN,
             "Content-Type": "application/json"
         }
-    }
+    };
 
     let options;
 
@@ -126,7 +126,7 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
         }
     })
 
-}
+};
 
 function mapStatus(issue, callback) {
 

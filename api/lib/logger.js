@@ -25,24 +25,24 @@ const logger = winstonFactory({token: process.env.LOGZIO_TOKEN});
 exports.info = function (message) {
   message = `${process.pid} - ` + message;
   logger.log('info', message);
-}
+};
 exports.error = function (message) {
   message = `${process.pid} - ` + message;
   logger.log('error', message);
-}
+};
 exports.warn = function (message) {
   message = `${process.pid} - ` + message;
   logger.log('warn', message);
-}
+};
 exports.debug = function (message) {
   message = `${process.pid} - ` + message;
   logger.log('debug', message);
-}
+};
 
 exports.silly = function(message) {
   message = `${process.pid} - ` + message;
   logger.log('silly', message);
-}
+};
 
 process.on('uncaughtException', function (err) {
   console.log(process.pid + " - " + err);

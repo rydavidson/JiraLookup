@@ -2,18 +2,18 @@ function authenticateUser(username, passhash, callback) {
 
   username = username.toLowerCase();
 
-  var api = window.location.href.split("/")[0] + "/api";
+  const api = window.location.href.split("/")[0] + "/api";
 
   if (username.length > 0) {
     if (passhash.length > 0) {
 
-      var xhr = createCORSRequest("POST", api + "/auth");
+      const xhr = createCORSRequest("POST", api + "/auth");
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
       xhr.onreadystatechange = function () {
 
         if (this.readyState === XMLHttpRequest.DONE) {
           if (this.status === 200) {
-            var res = JSON.parse(this.responseText);
+            const res = JSON.parse(this.responseText);
             callback(res);
           }
           else {
@@ -26,7 +26,7 @@ function authenticateUser(username, passhash, callback) {
             }
           }
         }
-      }
+      };
 
       xhr.send("username=" + username + "&password=" + passhash);
 
@@ -41,7 +41,7 @@ function authenticateUser(username, passhash, callback) {
 }
 
 function createCORSRequest(method, url) {
-  var xhr = new XMLHttpRequest();
+  let xhr = new XMLHttpRequest();
   if ("withCredentials" in xhr) {
 
     // Check if the XMLHttpRequest object has a "withCredentials" property.
@@ -64,38 +64,5 @@ function createCORSRequest(method, url) {
   return xhr;
 }
 
-function authenticateSalesforce() {
-  var key = "3MVG9dZJodJWITSsbGTC9oiHE5.rEyTmmyCamx9VJSIGtRcosTdhiFpMDAH2LOUEyrQgjqonHITspTCnJ0hJS";
-  var callback_uri = window.location.href.split("/")[0] + "/auth_callback";
-  var oauthApi = "https://login.salesforce.com/services/oauth2";
-
-  var xhr = createCORSRequest("GET", oauthApi + `/authorize?response_type=authorization_code&client_id=${key}&redirect_uri=${callback_uri}`);
-
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  xhr.onreadystatechange = function () {
-
-
-    // if (this.readyState === XMLHttpRequest.DONE) {
-    //   if (this.status === 200) {
-    //     var res = JSON.parse(this.responseText);
-    //
-    //   }
-    //   else {
-    //     if (this.status === 403) {
-    //
-    //     }
-    //     else {
-    //
-    //
-    //     }
-    //   }
-    // }
-  }
-
-  xhr.send();
-
-}
-
-export {authenticateUser, createCORSRequest, authenticateSalesforce};
+export {authenticateUser, createCORSRequest};
 
