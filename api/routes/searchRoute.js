@@ -16,15 +16,18 @@ searchRouter.get('/case/:id', function (req, res) {
   let sfReg = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9]+/gmi;
   let sfReg2 = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9][0-9][0-9][0-9][0-9][0-9]+/gmi;
 
+  let matched = false;
+
   if (searchKey.length > 0) {
 
-
-    if(sfReg.exec(searchKey) === null){
-      if(sfReg2.exec(searchKey) !== null){
-        searchKey = searchKey.slice(0,5) + "-" + searchKey.slice(5);
-        console.log(searchKey);
-      }
+    if (sfReg2.exec(searchKey) !== null) {
+      matched = true;
+      searchKey = searchKey.slice(0, 5) + "-" + searchKey.slice(5);
     }
+    if (sfReg.exec(searchKey) !== null) {
+
+    }
+
 
 
     jira.getJiraItem(constants.sfSearchType.searchType, searchKey, function (err, result) {
@@ -37,7 +40,7 @@ searchRouter.get('/case/:id', function (req, res) {
       }
     });
   } else {
-    res.sendStatus(400);
+    res.status(400).json("Invalid ");
   }
 });
 
@@ -52,17 +55,24 @@ searchRouter.get('/jira/:id', function (req, res) {
 
   if (searchKey.length > 0) {
 
-    let jiraReg = /^[a-z]*-[0-9]+$/gmi;
-    let jiraReg2 = /^[a-z]*[0-9]+$/gmi;
+    let jiraReg = /^[a-z]*-[0-9]+$/gm;
+    let jiraReg2 = /^[a-z]*[0-9]+$/gm;
 
-    if(jiraReg.exec(searchKey) === null){
-      if(jiraReg2.exec(searchKey) !== null){
-        let tempReg = /[0-9]+/gm;
-        let index = tempReg.exec(searchKey).index;
-        searchKey = searchKey.slice(0,index) + "-" + searchKey.slice(index);
-      }
+    let matched = false;
+
+    if (jiraReg2.exec(searchKey) !== null) {
+      matched = true;
+      let tempReg = /[0-9]+/gm;
+      let index = tempReg.exec(searchKey).index;
+      searchKey = searchKey.slice(0, index) + "-" + searchKey.slice(index);
     }
-
+    if (jiraReg.exec(searchKey) !== null) {
+      matched = true;
+    }
+    if (!matched) {
+      res.status(constants.invalidParameterError.httpCode).json(constants.invalidParameterError.message);
+      return;
+    }
     jira.getJiraItem(constants.jiraSearchType.searchType, searchKey, function (err, result) {
       if (isErr(err)) {
         handleErr(err, res);
@@ -75,11 +85,10 @@ searchRouter.get('/jira/:id', function (req, res) {
   } else {
     res.sendStatus(400);
   }
-});
+})
 
 
 function isErr(err) {
-
   if (err == null) {
     return false;
   }
@@ -87,11 +96,7 @@ function isErr(err) {
     return true;
   }
   if (typeof err.type !== undefined) {
-    if (err.type === "error") {
-      return true;
-    } else {
-      return false;
-    }
+    return err.type === "error";
   } else {
     return false;
   }
