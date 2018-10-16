@@ -4,6 +4,7 @@ const logzioWinstonTransport = require('winston-logzio');
 const winstonFactory = ({token}) => {
     const loggerOptions = {
         token: token,
+      level: "debug",
         host: "listener.logz.io",
         type: "nodejs"
     };
