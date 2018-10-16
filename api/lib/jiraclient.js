@@ -8,7 +8,7 @@ const logger = require('../lib/logger.js');
 exports.getJiraItem = function (searchType, searchKey, callback) {
 
     let jiraKeyOptions = {
-        uri: config.jiraKeyUrl + searchKey,
+        uri: config.jiraKeyUrl + searchKey.toUpperCase(),
         method: 'GET',
         headers: {
             "Authorization": "Basic " + process.env.JIRA_AUTH_TOKEN,
@@ -25,7 +25,18 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
         }
     }
 
+    let textOptions = {
+      uri: config.textUrl + "\"" + searchKey + "\"",
+      method: 'GET',
+      headers: {
+        "Authorization": "Basic " + process.env.JIRA_AUTH_TOKEN,
+        "Content-Type": "application/json"
+      }
+    }
+
     let options;
+
+
 
     switch(String(searchType)){
         case String(constants.sfSearchType.searchType): {
@@ -34,8 +45,13 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
         }
         case String(constants.jiraSearchType.searchType): {
             options = jiraKeyOptions;
+
             break;
         }
+      case String(constants.textSearchType.searchType): {
+        options = textOptions;
+        break;
+      }
         default: {
             logger.warn("Unable to determine search type for key " + searchKey);
             let reg1 = /[a-z0-9][a-z0-9][a-z0-9][a-z0-9][a-z0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]/gm;
@@ -53,6 +69,7 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
     }
 
     request(options, function (err, res, body) {
+      logger.info(JSON.stringify(options));
 
         //console.log("Res" + JSON.stringify(res));
         //console.log("Body: " +  JSON.stringify(body));
@@ -63,6 +80,9 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
         if (!err && res.statusCode == 200) {
             if (body.total > 0) {
 
+              if(options === jiraKeyOptions && body.total > 1){
+                logger.warn("Got more than one result for Jira key " + searchKey);
+              }
                 let resultArray = {results: []};
 
                 let resultsProcessed = 0;
@@ -79,6 +99,7 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
                     jira_item.jirauri = config.rootUrl + "browse/" + issue.key;
                     jira_item.updated = new Date(issue.fields.updated).toDateString();
                     jira_item.resolution = issue.fields.resolution !== null ? issue.fields.resolution.name : "Unknown";
+                    jira_item.raw_status = issue.fields.status.name;
                     if(issue.fields.assignee !== null){
                       jira_item.assignee = issue.fields.assignee.displayName;
                     } else {
@@ -102,7 +123,7 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
                     if (resultsProcessed === body.issues.length){
                       //logger.info(resultArray);
                       stripENGSUPP(resultArray, function(arr){
-                        logger.info("Stripped ENGSUPP");
+                        //logger.info("Stripped ENGSUPP");
                         logger.debug(resultArray);
                         callback(null, arr);
                       });
@@ -111,11 +132,11 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
                 //console.log(JSON.stringify(issue));
             }
             else {
-                //console.log(body);
+                console.log(body);
                 callback(constants.emptyResponse, constants.emptyResponse.message);
             }
         } else {
-            console.error(err);
+            logger.error(err);
             try {
                 callback(err, err.message);
             } catch (error) {

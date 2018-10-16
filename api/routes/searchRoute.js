@@ -77,6 +77,32 @@ searchRouter.get('/jira/:id', function (req, res) {
   }
 });
 
+searchRouter.get('/text/:text', function (req, res) {
+
+  let searchKey = req.params.text.trim().toLowerCase();
+  searchKey = searchKey.replace(/-/gm , " ");
+  searchKey = searchKey.replace(/@/gm, " ");
+
+  if (searchKey === undefined) {
+    res.sendStatus(400);
+  }
+
+  if (searchKey.length > 0) {
+
+    jira.getJiraItem(constants.textSearchType.searchType, searchKey, function (err, result) {
+      if (isErr(err)) {
+        handleErr(err, res);
+      } else if (err === constants.emptyResponse) {
+        res.status(err.httpCode).json(err.message);
+      } else {
+        res.status(203).json(result);
+      }
+    });
+  } else {
+    res.sendStatus(400);
+  }
+});
+
 
 function isErr(err) {
 

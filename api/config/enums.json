@@ -24,5 +24,8 @@
   },
   "sfSearchType": {
     "searchType": "sfid"
+  },
+  "textSearchType": {
+    "searchType": "text"
   }
 }

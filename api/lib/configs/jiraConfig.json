@@ -1,5 +1,6 @@
 {
   "rootUrl":"https://accelaeng.atlassian.net/",
   "jiraKeyUrl": "https://accelaeng.atlassian.net/rest/api/latest/search?jql=key=",
-  "sfidUrl": "https://accelaeng.atlassian.net/rest/api/latest/search?jql=cf[10600]~"
+  "sfidUrl": "https://accelaeng.atlassian.net/rest/api/latest/search?jql=cf[10600]~",
+  "textUrl": "https://accelaeng.atlassian.net/rest/api/latest/search?jql=summary~"
 }
