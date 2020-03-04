@@ -123,7 +123,7 @@ function childProcess() {
 
 // startup
 
-  db.connect();
+  //db.connect();
   app.listen(port);
   console.log(`Listening on port ${port}`);
 }
