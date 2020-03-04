@@ -96,7 +96,7 @@ exports.getJiraItem = function (searchType, searchKey, callback) {
                     resultsProcessed++;
 
                     if (resultsProcessed === body.issues.length){
-                      logger.debug(`Finished processing all results. Results processed: ${resultsProcesses}`);
+                      logger.debug(`Finished processing all results. Results processed: ${resultsProcessed}`);
                       logger.debug(`Beginning post processing`);
                       stripENGSUPP(resultArray, searchKey, function(arr){
                         logger.silly(JSON.stringify(resultArray));

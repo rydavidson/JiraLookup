@@ -81,11 +81,6 @@
                     this.show = true
                 });
             }
-        },
-        created() {
-            this.form.err = "WARNING! This site will no longer be available after Friday, September 21st";
-            this.form.variant = "warning";
-            this.showDismissibleAlert = true;
         }
     }
 </script>
