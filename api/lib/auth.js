@@ -6,7 +6,7 @@ const logger = require('./logger.js');
 
 exports.authenticateUser = function (username, hashedPassword, callback) {
 
-  if(proccess.env.AUTH_MODE === "local"){
+  if(process.env.AUTH_MODE === "local"){
     authenticateUserLocal(username, password, callback);
   }
 
